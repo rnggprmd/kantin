@@ -180,6 +180,98 @@
     </div>
     @endif
 
+    {{-- Mid-tier Analytics --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {{-- Metode Pembayaran --}}
+        <div class="anim-panel bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h3 class="font-black text-gray-900 text-sm tracking-tight">Metode Pembayaran</h3>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">Hari Ini</p>
+                </div>
+                <span class="material-symbols-outlined text-primary/20">account_balance_wallet</span>
+            </div>
+            <div class="space-y-4">
+                @php
+                    $totalMetode = $distribusiBayar->sum('total') ?: 1;
+                @endphp
+                @foreach(['tunai' => 'payments', 'non_tunai' => 'qr_code_2'] as $metode => $icon)
+                    @php
+                        $data = $distribusiBayar->where('metode_bayar', $metode)->first();
+                        $count = $data ? $data->total : 0;
+                        $pct = round(($count / $totalMetode) * 100);
+                        $color = $metode === 'tunai' ? 'emerald' : 'blue';
+                    @endphp
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-xs font-bold uppercase">
+                            <div class="flex items-center gap-2 text-gray-500">
+                                <span class="material-symbols-outlined !text-[16px] text-{{ $color }}-500">{{ $icon }}</span>
+                                {{ str_replace('_', ' ', $metode) }}
+                            </div>
+                            <span class="text-gray-900">{{ $count }} Txn</span>
+                        </div>
+                        <div class="h-2 bg-gray-50 rounded-full overflow-hidden border border-gray-100">
+                            <div class="h-full bg-{{ $color }}-500 rounded-full transition-all duration-1000" style="width: {{ $pct }}%"></div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- Performa Kategori --}}
+        <div class="anim-panel bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h3 class="font-black text-gray-900 text-sm tracking-tight">Performa Kategori</h3>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">30 Hari Terakhir</p>
+                </div>
+                <span class="material-symbols-outlined text-primary/20">dashboard_customize</span>
+            </div>
+            <div class="space-y-3">
+                @forelse($performaKategori->take(3) as $kat)
+                <div class="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100 group hover:border-primary/20 transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-primary shadow-sm">
+                            <span class="material-symbols-outlined !text-[18px]">category</span>
+                        </div>
+                        <p class="text-xs font-black text-gray-700">{{ $kat->nama }}</p>
+                    </div>
+                    <p class="text-[11px] font-black text-primary">Rp {{ number_format($kat->total_pendapatan, 0, ',', '.') }}</p>
+                </div>
+                @empty
+                <p class="text-center text-xs text-gray-400 py-4">Belum ada data</p>
+                @endforelse
+            </div>
+        </div>
+
+        {{-- Kasir Teraktif --}}
+        <div class="anim-panel bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h3 class="font-black text-gray-900 text-sm tracking-tight">Personel Teraktif</h3>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">Hari Ini</p>
+                </div>
+                <span class="material-symbols-outlined text-primary/20">badge</span>
+            </div>
+            <div class="space-y-3">
+                @forelse($kasirTeraktif as $kasir)
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-full bg-primary/5 flex items-center justify-center text-primary font-black text-xs border border-primary/10">
+                        {{ substr($kasir->name, 0, 1) }}
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-xs font-black text-gray-800">{{ $kasir->name }}</p>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase">{{ $kasir->total_transaksi }} Transaksi</p>
+                    </div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></div>
+                </div>
+                @empty
+                <p class="text-center text-xs text-gray-400 py-4">Belum ada aktivitas</p>
+                @endforelse
+            </div>
+        </div>
+    </div>
+
     {{-- Bottom Panels --}}
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-5">
 
@@ -280,5 +372,117 @@
         </div>
 
     </div>
+    {{-- Sales Trend Chart --}}
+    <div class="anim-panel bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8 mt-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div>
+                <h3 class="font-black text-gray-900 text-lg tracking-tight">Tren Penjualan</h3>
+                <p class="text-xs text-gray-400 font-medium mt-0.5">Analisis pendapatan dalam 7 hari terakhir</p>
+            </div>
+            <div class="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                <span class="w-3 h-3 rounded-full bg-primary shadow-[0_0_8px_rgba(21,23,61,0.4)]"></span>
+                <span class="text-[11px] font-black text-gray-600 uppercase tracking-widest">Pendapatan (IDR)</span>
+            </div>
+        </div>
+        <div class="h-[300px] w-full">
+            <canvas id="salesTrendChart"></canvas>
+        </div>
+    </div>
 </div>
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('salesTrendChart').getContext('2d');
+        
+        // Gradient for the chart
+        const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, 'rgba(21, 23, 61, 0.15)');
+        gradient.addColorStop(1, 'rgba(21, 23, 61, 0)');
+
+        const rawData = @json($grafikData);
+        
+        // Fill in missing dates for the last 7 days
+        const labels = [];
+        const values = [];
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            const dateString = date.toISOString().split('T')[0];
+            
+            const label = date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+            labels.push(label);
+            
+            const match = rawData.find(d => d.tanggal === dateString);
+            values.push(match ? parseFloat(match.total) : 0);
+        }
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Total Penjualan',
+                    data: values,
+                    borderColor: '#15173D',
+                    borderWidth: 4,
+                    pointBackgroundColor: '#FFFFFF',
+                    pointBorderColor: '#15173D',
+                    pointBorderWidth: 2,
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    backgroundColor: gradient,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#15173D',
+                        titleFont: { size: 12, weight: 'bold' },
+                        bodyFont: { size: 13, weight: 'bold' },
+                        padding: 12,
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return 'Rp ' + context.parsed.y.toLocaleString('id-ID');
+                            }
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(0, 0, 0, 0.03)', drawBorder: false },
+                        ticks: {
+                            font: { size: 10, weight: 'bold' },
+                            color: '#94a3b8',
+                            callback: function(value) {
+                                if (value >= 1000000) return (value / 1000000) + 'jt';
+                                if (value >= 1000) return (value / 1000) + 'rb';
+                                return value;
+                            }
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: {
+                            font: { size: 10, weight: 'bold' },
+                            color: '#94a3b8'
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+@endpush
 @endsection

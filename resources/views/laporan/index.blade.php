@@ -80,6 +80,103 @@
                 <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Average Basket Size</p>
                 <p class="text-3xl font-black text-gray-900 tracking-tighter">Rp {{ number_format($rataRata, 0, ',', '.') }}</p>
             </div>
+    </div>
+    </div>
+
+    {{-- Analytical Insights Grid --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        {{-- Metode Pembayaran --}}
+        <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Metode Bayar</h4>
+                <span class="material-symbols-outlined text-gray-300 !text-[18px]">account_balance_wallet</span>
+            </div>
+            <div class="space-y-3">
+                @php $totalM = $distribusiBayar->sum('jumlah') ?: 1; @endphp
+                @foreach(['tunai', 'non_tunai'] as $m)
+                    @php 
+                        $d = $distribusiBayar->where('metode_bayar', $m)->first();
+                        $c = $d ? $d->jumlah : 0;
+                        $pct = round(($c / $totalM) * 100);
+                    @endphp
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-[11px] font-bold">
+                            <span class="text-gray-500 capitalize">{{ str_replace('_', ' ', $m) }}</span>
+                            <span class="text-gray-900">{{ $c }} Txn</span>
+                        </div>
+                        <div class="h-1.5 bg-gray-50 rounded-full overflow-hidden border border-gray-100">
+                            <div class="h-full {{ $m == 'tunai' ? 'bg-emerald-500' : 'bg-blue-500' }} rounded-full" style="width: {{ $pct }}%"></div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- Pendapatan per Kategori --}}
+        <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Top Kategori</h4>
+                <span class="material-symbols-outlined text-gray-300 !text-[18px]">category</span>
+            </div>
+            <div class="space-y-2">
+                @forelse($pendapatanKategori->take(3) as $kat)
+                <div class="flex items-center justify-between text-[11px]">
+                    <span class="font-bold text-gray-600 truncate mr-2">{{ $kat->nama }}</span>
+                    <span class="font-black text-primary shrink-0">Rp {{ number_format($kat->total, 0, ',', '.') }}</span>
+                </div>
+                @empty
+                <p class="text-[10px] text-gray-400 text-center py-2 italic">Data belum tersedia</p>
+                @endforelse
+            </div>
+        </div>
+
+        {{-- Jam Sibuk --}}
+        <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Jam Terpadat</h4>
+                <span class="material-symbols-outlined text-gray-300 !text-[18px]">schedule</span>
+            </div>
+            <div class="flex items-end justify-between h-12 gap-1 px-1">
+                @php $maxJam = $distribusiJam->max('total') ?: 1; @endphp
+                @for($h=8; $h<=18; $h++)
+                    @php 
+                        $j = $distribusiJam->where('jam', $h)->first();
+                        $v = $j ? $j->total : 0;
+                        $hPct = ($v / $maxJam) * 100;
+                    @endphp
+                    <div class="flex-1 bg-primary/5 rounded-t-sm relative group" style="height: {{ max(10, $hPct) }}%">
+                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-1.5 py-0.5 bg-gray-900 text-white text-[8px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
+                            {{ $h }}:00 ({{ $v }})
+                        </div>
+                    </div>
+                @endfor
+            </div>
+            <div class="flex justify-between mt-2 px-1 text-[8px] font-black text-gray-300 uppercase tracking-widest">
+                <span>08:00</span>
+                <span>18:00</span>
+            </div>
+        </div>
+
+        {{-- Pelanggan Setia --}}
+        <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Leaderboard</h4>
+                <span class="material-symbols-outlined text-gray-300 !text-[18px]">workspace_premium</span>
+            </div>
+            <div class="space-y-2">
+                @forelse($pelangganTeraktif->take(3) as $p)
+                <div class="flex items-center gap-2">
+                    <div class="w-5 h-5 rounded bg-amber-50 text-amber-600 flex items-center justify-center text-[9px] font-black border border-amber-100">
+                        {{ substr($p->pelanggan_nama, 0, 1) }}
+                    </div>
+                    <span class="text-[10px] font-bold text-gray-700 truncate flex-1">{{ $p->pelanggan_nama }}</span>
+                    <span class="text-[10px] font-black text-primary">{{ $p->jumlah }}x</span>
+                </div>
+                @empty
+                <p class="text-[10px] text-gray-400 text-center py-2 italic">Data belum tersedia</p>
+                @endforelse
+            </div>
         </div>
     </div>
 

@@ -57,6 +57,36 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
+        // Distribusi Metode Bayar (Hari Ini)
+        $distribusiBayar = Transaksi::whereDate('created_at', $today)
+            ->where('status', 'selesai')
+            ->select('metode_bayar', DB::raw('count(*) as total'))
+            ->groupBy('metode_bayar')
+            ->get();
+
+        // Performa Kategori (30 hari terakhir)
+        $performaKategori = DB::table('detail_transaksis')
+            ->join('transaksis', 'detail_transaksis.transaksi_id', '=', 'transaksis.id')
+            ->join('menus', 'detail_transaksis.menu_id', '=', 'menus.id')
+            ->join('kategoris', 'menus.kategori_id', '=', 'kategoris.id')
+            ->where('transaksis.status', 'selesai')
+            ->whereDate('transaksis.created_at', '>=', now()->subDays(30))
+            ->select('kategoris.nama', DB::raw('SUM(detail_transaksis.subtotal) as total_pendapatan'))
+            ->groupBy('kategoris.nama')
+            ->orderByDesc('total_pendapatan')
+            ->get();
+
+        // Kasir Teraktif (Hari Ini)
+        $kasirTeraktif = DB::table('transaksis')
+            ->join('users', 'transaksis.user_id', '=', 'users.id')
+            ->whereDate('transaksis.created_at', $today)
+            ->where('transaksis.status', 'selesai')
+            ->select('users.name', DB::raw('count(*) as total_transaksi'))
+            ->groupBy('users.name')
+            ->orderByDesc('total_transaksi')
+            ->limit(5)
+            ->get();
+
         return view('dashboard.index', compact(
             'transaksiHariIni',
             'pendapatanHariIni',
@@ -64,7 +94,10 @@ class DashboardController extends Controller
             'totalMenuAktif',
             'transaksiTerbaru',
             'grafikData',
-            'menuTerlaris'
+            'menuTerlaris',
+            'distribusiBayar',
+            'performaKategori',
+            'kasirTeraktif'
         ));
     }
 }

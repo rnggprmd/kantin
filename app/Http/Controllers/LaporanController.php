@@ -58,6 +58,50 @@ class LaporanController extends Controller
             ->limit(10)
             ->get();
 
+        // Distribusi Metode Bayar
+        $distribusiBayar = DB::table('transaksis')
+            ->where('status', 'selesai')
+            ->whereDate('created_at', '>=', $tanggalDari)
+            ->whereDate('created_at', '<=', $tanggalSampai)
+            ->select('metode_bayar', DB::raw('COUNT(*) as jumlah'), DB::raw('SUM(total_harga) as total'))
+            ->groupBy('metode_bayar')
+            ->get();
+
+        // Pendapatan per Kategori
+        $pendapatanKategori = DB::table('detail_transaksis')
+            ->join('transaksis', 'detail_transaksis.transaksi_id', '=', 'transaksis.id')
+            ->join('menus', 'detail_transaksis.menu_id', '=', 'menus.id')
+            ->join('kategoris', 'menus.kategori_id', '=', 'kategoris.id')
+            ->where('transaksis.status', 'selesai')
+            ->whereDate('transaksis.created_at', '>=', $tanggalDari)
+            ->whereDate('transaksis.created_at', '<=', $tanggalSampai)
+            ->select('kategoris.nama', DB::raw('SUM(detail_transaksis.subtotal) as total'))
+            ->groupBy('kategoris.nama')
+            ->orderByDesc('total')
+            ->get();
+
+        // Distribusi Jam Transaksi
+        $distribusiJam = DB::table('transaksis')
+            ->where('status', 'selesai')
+            ->whereDate('created_at', '>=', $tanggalDari)
+            ->whereDate('created_at', '<=', $tanggalSampai)
+            ->select(DB::raw('HOUR(created_at) as jam'), DB::raw('COUNT(*) as total'))
+            ->groupBy('jam')
+            ->orderBy('jam')
+            ->get();
+
+        // Pelanggan Teraktif
+        $pelangganTeraktif = DB::table('transaksis')
+            ->where('status', 'selesai')
+            ->whereDate('created_at', '>=', $tanggalDari)
+            ->whereDate('created_at', '<=', $tanggalSampai)
+            ->whereNotNull('pelanggan_nama')
+            ->select('pelanggan_nama', DB::raw('COUNT(*) as jumlah'), DB::raw('SUM(total_harga) as total'))
+            ->groupBy('pelanggan_nama')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get();
+
         return view('laporan.index', compact(
             'transaksis',
             'ringkasan',
@@ -66,7 +110,11 @@ class LaporanController extends Controller
             'totalTransaksi',
             'rataRata',
             'tanggalDari',
-            'tanggalSampai'
+            'tanggalSampai',
+            'distribusiBayar',
+            'pendapatanKategori',
+            'distribusiJam',
+            'pelangganTeraktif'
         ));
     }
 
@@ -85,12 +133,38 @@ class LaporanController extends Controller
         $totalPendapatan = $transaksis->sum('total_harga');
         $totalTransaksi = $transaksis->count();
 
+        // Data tambahan untuk PDF
+        $ringkasan = DB::table('transaksis')
+            ->where('status', 'selesai')
+            ->whereDate('created_at', '>=', $tanggalDari)
+            ->whereDate('created_at', '<=', $tanggalSampai)
+            ->select(DB::raw('DATE(created_at) as tanggal'), DB::raw('COUNT(*) as jumlah'), DB::raw('SUM(total_harga) as total'))
+            ->groupBy('tanggal')->orderBy('tanggal')->get();
+
+        $menuTerlaris = DB::table('detail_transaksis')
+            ->join('transaksis', 'detail_transaksis.transaksi_id', '=', 'transaksis.id')
+            ->where('transaksis.status', 'selesai')
+            ->whereDate('transaksis.created_at', '>=', $tanggalDari)
+            ->whereDate('transaksis.created_at', '<=', $tanggalSampai)
+            ->select('detail_transaksis.nama_menu', DB::raw('SUM(detail_transaksis.qty) as total'))
+            ->groupBy('detail_transaksis.nama_menu')->orderByDesc('total')->limit(5)->get();
+
+        $distribusiBayar = DB::table('transaksis')
+            ->where('status', 'selesai')
+            ->whereDate('created_at', '>=', $tanggalDari)
+            ->whereDate('created_at', '<=', $tanggalSampai)
+            ->select('metode_bayar', DB::raw('COUNT(*) as jumlah'))
+            ->groupBy('metode_bayar')->get();
+
         $pdf = Pdf::loadView('laporan.pdf', compact(
             'transaksis',
             'totalPendapatan',
             'totalTransaksi',
             'tanggalDari',
-            'tanggalSampai'
+            'tanggalSampai',
+            'ringkasan',
+            'menuTerlaris',
+            'distribusiBayar'
         ))->setPaper('a4', 'landscape');
 
         return $pdf->download("laporan-{$tanggalDari}-{$tanggalSampai}.pdf");
