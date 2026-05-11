@@ -10,7 +10,7 @@
 
     <div class="flex items-center justify-between pb-6 mb-8 border-b border-gray-200">
         <div>
-            <h2 class="text-2xl font-black text-gray-900 tracking-tight">Katalog Baru</h2>
+            <h2 class="text-2xl font-black text-gray-900 tracking-tight">Menu Baru</h2>
             <p class="text-sm text-gray-500 font-medium mt-1">Tambahkan item makanan/minuman ke dalam Etalase Kasir POS.</p>
         </div>
         <a href="{{ route('menu.index') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white hover:bg-gray-50 text-gray-700 text-sm font-bold rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 transition-all">
@@ -25,7 +25,7 @@
         {{-- Section 1: Visual --}}
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <div class="lg:col-span-4">
-                <h3 class="text-lg font-bold text-gray-900">Visual Produk</h3>
+                <h3 class="text-lg font-bold text-gray-900">Visual Menu</h3>
                 <p class="text-sm text-gray-500 mt-2 leading-relaxed">Representasi visual sangat penting agar kasir cepat mengenali pesanan. Pastikan gambar jelas dan menarik.</p>
             </div>
             
@@ -82,7 +82,7 @@
                 <div class="bg-white rounded-xl shadow-sm ring-1 ring-gray-900/5 p-6 sm:p-8">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div class="sm:col-span-2 relative">
-                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Nama Produk <span class="text-red-500">*</span></label>
+                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Nama Menu <span class="text-red-500">*</span></label>
                             <input type="text" name="nama" value="{{ old('nama') }}" required
                                    class="w-full bg-gray-50/50 border border-gray-300 text-gray-900 placeholder-gray-400 rounded-lg px-4 py-3 text-sm font-semibold focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:bg-white transition-colors"
                                    placeholder="Contoh: Ayam Geprek Spesial">

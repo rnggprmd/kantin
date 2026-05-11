@@ -6,6 +6,102 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-headline: 'Plus Jakarta Sans', sans-serif;
+
+    /* Colors */
+    --color-tertiary-fixed: #ffd8ee;
+    --color-tertiary-fixed-dim: #ffade3;
+    --color-primary-container: #15173d;
+    --color-on-primary-fixed: #15173d;
+    --color-surface-tint: #595b85;
+    --color-on-surface-variant: #46464e;
+    --color-on-secondary: #ffffff;
+    --color-secondary-fixed: #ffd7f6;
+    --color-surface-container-highest: #e1e3e4;
+    --color-secondary: #9d2a9d;
+    --color-surface-container: #edeeef;
+    --color-on-secondary-fixed: #380039;
+    --color-surface-container-high: #e7e8e9;
+    --color-secondary-container: #fe82f7;
+    --color-surface: #f8f9fa;
+    --color-on-primary-fixed-variant: #41436b;
+    --color-surface-bright: #f8f9fa;
+    --color-tertiary-container: #3a0030;
+    --color-on-error: #ffffff;
+    --color-inverse-primary: #c1c3f3;
+    --color-surface-variant: #e1e3e4;
+    --color-on-tertiary: #ffffff;
+    --color-inverse-surface: #2e3132;
+    --color-inverse-on-surface: #f0f1f2;
+    --color-on-primary-container: #7e80ac;
+    --color-primary-fixed: #e1e0ff;
+    --color-secondary-fixed-dim: #ffaaf5;
+    --color-primary: #000000;
+    --color-on-error-container: #93000a;
+    --color-on-primary: #ffffff;
+    --color-surface-dim: #d9dadb;
+    --color-on-surface: #191c1d;
+    --color-error: #ba1a1a;
+    --color-on-tertiary-fixed: #3a0030;
+    --color-on-background: #191c1d;
+    --color-outline: #77767f;
+    --color-on-secondary-fixed-variant: #800182;
+    --color-surface-container-low: #f3f4f5;
+    --color-outline-variant: #c7c5cf;
+    --color-on-secondary-container: #7b007d;
+    --color-primary-fixed-dim: #c1c3f3;
+    --color-on-tertiary-container: #b76aa0;
+    --color-tertiary: #000000;
+    --color-on-tertiary-fixed-variant: #712e5f;
+    --color-background: #f8f9fa;
+    --color-surface-container-lowest: #ffffff;
+    --color-error-container: #ffdad6;
+
+    /* Custom Spacing - Ensure all names from user code are present */
+    --spacing-xs: 4px;
+    --spacing-sm: 12px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-xxl: 48px;
+    --spacing-gutter: 24px;
+    --spacing-container-max: 1280px;
+
+    /* Typography Scales - Tailwind 4 Syntax */
+    --text-headline-xl: 40px;
+    --text-headline-xl--line-height: 48px;
+    --text-headline-xl--letter-spacing: -0.02em;
+    --text-headline-xl--font-weight: 700;
+
+    --text-headline-lg: 32px;
+    --text-headline-lg--line-height: 40px;
+    --text-headline-lg--letter-spacing: -0.02em;
+    --text-headline-lg--font-weight: 700;
+
+    --text-headline-md: 24px;
+    --text-headline-md--line-height: 32px;
+    --text-headline-md--font-weight: 600;
+
+    --text-headline-sm: 20px;
+    --text-headline-sm--line-height: 28px;
+    --text-headline-sm--font-weight: 600;
+
+    --text-body-lg: 18px;
+    --text-body-lg--line-height: 28px;
+    --text-body-lg--font-weight: 400;
+
+    --text-body-md: 16px;
+    --text-body-md--line-height: 24px;
+    --text-body-md--font-weight: 400;
+
+    --text-body-sm: 14px;
+    --text-body-sm--line-height: 20px;
+    --text-body-sm--font-weight: 400;
+
+    --text-label-md: 12px;
+    --text-label-md--line-height: 16px;
+    --text-label-md--letter-spacing: 0.05em;
+    --text-label-md--font-weight: 600;
 }

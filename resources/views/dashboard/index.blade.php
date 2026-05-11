@@ -54,15 +54,15 @@
         </a>
 
         {{-- Peringatan Stok --}}
-        <a href="{{ route('inventaris.index', ['filter' => 'rendah']) }}" class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:border-red-300 hover:shadow-md transition-all group">
+        <a href="{{ route('menu.index') }}" class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:border-red-300 hover:shadow-md transition-all group">
             <div class="flex justify-between items-start mb-3">
                 <p class="text-[11px] text-red-600 uppercase tracking-wider font-bold">Peringatan Stok Kritis</p>
                 <div class="p-1.5 bg-red-50 rounded-md text-red-500 border border-red-100 group-hover:bg-red-100 transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                 </div>
             </div>
-            <p class="text-2xl font-black {{ ($stokMenuRendah + $stokInventarisRendah) > 0 ? 'text-red-600' : 'text-gray-900' }} tracking-tight">
-                {{ $stokMenuRendah }} <span class="text-xs font-semibold text-red-400 normal-case tracking-normal">Menu</span> &amp; {{ $stokInventarisRendah }} <span class="text-xs font-semibold text-red-400 normal-case tracking-normal">Alat</span>
+            <p class="text-2xl font-black {{ $stokMenuRendah > 0 ? 'text-red-600' : 'text-gray-900' }} tracking-tight">
+                {{ $stokMenuRendah }} <span class="text-sm font-semibold text-red-400 normal-case tracking-normal">Menu</span>
             </p>
         </a>
     </div>
@@ -109,7 +109,7 @@
         {{-- Menu Terlaris (30 Hari) --}}
         <div class="bg-white border border-gray-200 rounded-xl shadow-sm flex flex-col">
             <div class="px-5 py-4 border-b border-gray-100">
-                <h3 class="font-bold text-gray-900 text-sm">Produk Performa Tinggi</h3>
+                <h3 class="font-bold text-gray-900 text-sm">Menu Performa Tinggi</h3>
                 <p class="text-xs text-gray-500">Menu paling diminati (30 Hari Terakhir)</p>
             </div>
             <div class="p-5 space-y-4 flex-1">

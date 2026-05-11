@@ -119,10 +119,10 @@ class TransaksiController extends Controller
 
             // Handle Non-Tunai (Midtrans)
             if ($request->metode_bayar === 'non_tunai') {
-                Config::$serverKey = env('MIDTRANS_SERVER_KEY');
-                Config::$isProduction = env('MIDTRANS_IS_PRODUCTION', false);
-                Config::$isSanitized = env('MIDTRANS_IS_SANITIZED', true);
-                Config::$is3ds = env('MIDTRANS_IS_3DS', true);
+                Config::$serverKey = config('services.midtrans.server_key');
+                Config::$isProduction = (bool) config('services.midtrans.is_production');
+                Config::$isSanitized = (bool) config('services.midtrans.is_sanitized');
+                Config::$is3ds = (bool) config('services.midtrans.is_3ds');
 
                 $params = [
                     'transaction_details' => [
@@ -144,7 +144,7 @@ class TransaksiController extends Controller
 
                 try {
                     $snapToken = Snap::getSnapToken($params);
-                    $transaksi->update(['catatan' => $snapToken]);
+                    $transaksi->update(['snap_token' => $snapToken]);
                 } catch (\Exception $e) {
                     throw new \Exception('Koneksi Midtrans Gagal: ' . $e->getMessage());
                 }
@@ -174,17 +174,27 @@ class TransaksiController extends Controller
 
     public function destroy(Transaksi $transaksi)
     {
-        if ($transaksi->status === 'selesai') {
-            // Kembalikan stok
-            foreach ($transaksi->details as $detail) {
-                if ($detail->menu) {
-                    $detail->menu->increment('stok', $detail->qty);
-                }
-            }
+        // Kembalikan stok jika transaksi belum dibatalkan
+        if ($transaksi->status !== 'batal') {
+            $transaksi->restoreStock();
         }
 
         $transaksi->update(['status' => 'batal']);
 
         return back()->with('success', 'Transaksi berhasil dibatalkan.');
+    }
+    public function markAsSuccess(Transaksi $transaksi)
+    {
+        // Security check: Only the owner (cashier) can mark as success
+        if ($transaksi->user_id !== auth()->id()) {
+            return response()->json(['status' => 'error', 'message' => 'Unauthorized'], 403);
+        }
+
+        // Only update if currently pending
+        if ($transaksi->status === 'pending') {
+            $transaksi->update(['status' => 'selesai']);
+        }
+
+        return response()->json(['status' => 'success']);
     }
 }

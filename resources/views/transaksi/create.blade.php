@@ -10,10 +10,10 @@
         <input type="hidden" name="pelanggan_nama" x-model="pelangganNama">
         <input type="hidden" name="uang_bayar" :value="uangBayar || ''">
         <input type="hidden" name="catatan" x-model="catatan">
-        <template x-for="(item, index) in cart" :key="item.id">
-            <input type="hidden" :name="'items[' + index + '][menu_id]'" :value="item.id">
-            <input type="hidden" :name="'items[' + index + '][qty]'" :value="item.qty">
-        </template>
+        <input type="hidden" name="metode_bayar" x-model="metodeBayar">
+        <input type="hidden" name="pelanggan_nama" x-model="pelangganNama">
+        <input type="hidden" name="uang_bayar" :value="uangBayar || ''">
+        <input type="hidden" name="catatan" x-model="catatan">
 
         <div class="flex flex-col md:flex-row gap-4 h-full">
 
@@ -116,8 +116,11 @@
                         </template>
 
                         <div class="space-y-3">
-                            <template x-for="item in cart" :key="item.id">
+                            <template x-for="(item, index) in cart" :key="item.id">
                                 <div class="flex flex-col gap-1.5 pb-3 border-b border-gray-100 last:border-0 last:pb-0">
+                                    {{-- Hidden Inputs for Form Submission --}}
+                                    <input type="hidden" :name="'items[' + index + '][menu_id]'" :value="item.id">
+                                    <input type="hidden" :name="'items[' + index + '][qty]'" :value="item.qty">
                                     <div class="flex justify-between items-start min-w-0">
                                         <p class="text-[13px] font-bold text-gray-900 line-clamp-2 leading-tight" x-text="item.nama"></p>
                                         <p class="text-[13px] font-extrabold text-primary ml-2 shrink-0" x-text="'Rp ' + (item.harga * item.qty).toLocaleString('id-ID')"></p>
@@ -242,8 +245,26 @@ function pos() {
             this.catatan = '';
         },
         prepareSubmit(e) {
-            if(this.cart.length === 0 || (this.metodeBayar === 'tunai' && this.uangBayar < this.total)){
+            // Validasi keranjang kosong
+            if (this.cart.length === 0) {
+                alert('Keranjang masih kosong!');
                 e.preventDefault();
+                return;
+            }
+
+            // Validasi Qty setiap item
+            const hasInvalidQty = this.cart.some(item => !item.qty || item.qty < 1);
+            if (hasInvalidQty) {
+                alert('Ada item dengan jumlah tidak valid!');
+                e.preventDefault();
+                return;
+            }
+
+            // Validasi Uang Bayar jika Tunai
+            if (this.metodeBayar === 'tunai' && this.uangBayar < this.total) {
+                alert('Uang bayar kurang dari total tagihan!');
+                e.preventDefault();
+                return;
             }
         }
     }

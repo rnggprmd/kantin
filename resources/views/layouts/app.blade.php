@@ -25,10 +25,87 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         [x-cloak] { display: none !important; }
+
+        /* Custom Scrollbar - Force Visibility */
+        .custom-scrollbar::-webkit-scrollbar { 
+            width: 5px !important; 
+            display: block !important;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track { 
+            background: rgba(255, 255, 255, 0.02) !important; 
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb { 
+            background: rgba(228, 145, 201, 0.2) !important; 
+            border-radius: 10px !important; 
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { 
+            background: rgba(228, 145, 201, 0.4) !important; 
+        }
+
+        /* Advanced Animations */
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .nav-item-animate {
+            animation: slideInRight 0.5s ease out forwards;
+            /* Remove initial opacity: 0 to ensure visibility if animation fails */
+        }
+
+        /* Sidebar Transition */
+        .sidebar-transition {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Premium Hover & Active States */
+        .sidebar-item {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-item:hover {
+            background: rgba(255, 255, 255, 0.05) !important;
+            transform: translateX(4px);
+        }
+
+        .sidebar-item:hover .material-symbols-outlined {
+            color: #E491C9 !important;
+            transform: scale(1.1);
+        }
+
+        .glass-active {
+            background: rgba(228, 145, 201, 0.1) !important;
+            border-left: 4px solid #E491C9 !important;
+        }
+
+        /* Tooltip */
+        .sidebar-tooltip {
+            position: absolute;
+            left: 100%;
+            margin-left: 10px;
+            padding: 6px 10px;
+            background: #15173D;
+            color: white;
+            border-radius: 6px;
+            font-size: 11px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.1);
+            z-index: 50;
+        }
+
+        .sidebar-item:hover .sidebar-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
     </style>
     @stack('styles')
 </head>
@@ -36,112 +113,165 @@
 
     <!-- Mobile Overlay -->
     <div x-show="mobileOpen" x-cloak @click="mobileOpen = false" class="fixed inset-0 bg-primary/50 z-30 lg:hidden transition-opacity"></div>
-
+    
     <!-- Sidebar -->
-    <aside class="fixed top-0 left-0 h-full z-40 bg-primary text-white flex flex-col transition-all duration-300 shadow-xl overflow-hidden"
+    <aside class="fixed top-0 left-0 h-full z-40 bg-[#15173D] text-white/70 flex flex-col sidebar-transition border-r border-white/10 shadow-2xl"
+           style="transition-timing-function: cubic-bezier(0.68, -0.55, 0.27, 1.55);"
            :class="[
-               sidebarOpen ? 'w-72' : 'w-20',
+               sidebarOpen ? 'w-[280px]' : 'w-20',
                mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
            ]">
         
         <!-- Logo Area -->
-        <div class="flex items-center justify-center h-16 border-b border-white/10 shrink-0 whitespace-nowrap overflow-hidden">
-            <span x-show="sidebarOpen" x-cloak class="font-black text-xl tracking-tight transition-opacity duration-300">Kantin<span class="text-tertiary">Maria</span></span>
-            <span x-show="!sidebarOpen" x-cloak class="font-black text-xl text-tertiary transition-opacity duration-300">KM</span>
+        <div class="flex items-center h-20 px-6 border-b border-white/5 shrink-0 overflow-hidden">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center border border-white/10 sidebar-transition">
+                    <span class="material-symbols-outlined text-white text-2xl">restaurant</span>
+                </div>
+                <div x-show="sidebarOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 -translate-x-4" x-transition:enter-end="opacity-100 translate-x-0" class="flex flex-col whitespace-nowrap">
+                    <span class="font-black text-white text-lg leading-tight">Kantin<span class="text-tertiary">Maria</span></span>
+                    <span class="text-[9px] uppercase tracking-[0.2em] font-bold text-white/40 mt-0.5">Management System</span>
+                </div>
+            </div>
         </div>
 
-        <!-- Navigation -->
-        <nav class="flex-1 overflow-y-auto py-4 font-medium sidebar-nav px-3 space-y-2.5">
-            <a href="{{ route('dashboard') }}" 
-               :class="sidebarOpen ? 'px-3 justify-start' : 'px-0 justify-center'"
-               class="flex items-center py-2.5 rounded-md transition-colors whitespace-nowrap {{ request()->routeIs('dashboard') ? 'bg-secondary text-white' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                <span x-show="sidebarOpen" x-cloak class="ml-3 text-sm">Dashboard</span>
-            </a>
+        <!-- Navigation Container -->
+        <div class="flex-1 overflow-y-auto py-6 px-3 space-y-7 custom-scrollbar">
+            
+            <!-- Group: Main -->
+            <div>
+                <p x-show="sidebarOpen" class="px-4 text-[10px] font-black uppercase tracking-[0.15em] text-white/30 mb-3 nav-item-animate" style="animation-delay: 0.1s;">Utama</p>
+                <div class="space-y-1">
+                    <a href="{{ route('dashboard') }}" 
+                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate {{ request()->routeIs('dashboard') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white' }}"
+                       style="animation-delay: 0.2s;"
+                       :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'">
+                        <span class="material-symbols-outlined !text-[22px] sidebar-transition {{ request()->routeIs('dashboard') ? 'text-tertiary' : 'text-white/40 group-hover:text-white' }}">dashboard</span>
+                        <span x-show="sidebarOpen" class="ml-4 text-sm font-bold tracking-tight">Dashboard</span>
+                        <span x-show="!sidebarOpen" class="sidebar-tooltip">Dashboard</span>
+                        @if(request()->routeIs('dashboard'))
+                        <div class="absolute right-3 w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_8px_rgba(228,145,201,0.6)]"></div>
+                        @endif
+                    </a>
 
-            <a href="{{ route('transaksi.index') }}" 
-               :class="sidebarOpen ? 'px-3 justify-start' : 'px-0 justify-center'"
-               class="flex items-center py-2.5 rounded-md transition-colors whitespace-nowrap {{ request()->routeIs('transaksi.*') ? 'bg-secondary text-white' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                <span x-show="sidebarOpen" x-cloak class="ml-3 text-sm">Transaksi</span>
-            </a>
-
-            <a href="{{ route('inventaris.index') }}" 
-               :class="sidebarOpen ? 'px-3 justify-start' : 'px-0 justify-center'"
-               class="flex items-center py-2.5 rounded-md transition-colors whitespace-nowrap {{ request()->routeIs('inventaris.*') ? 'bg-secondary text-white' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                <span x-show="sidebarOpen" x-cloak class="ml-3 text-sm">Inventaris</span>
-            </a>
-
-            @if(auth()->user()->isAdmin())
-            <div class="pt-4 pb-1">
-                <span x-show="sidebarOpen" x-cloak class="px-3 text-[10px] uppercase tracking-wider text-tertiary/70 font-bold block mb-1">Manajemen Admin</span>
-                <hr x-show="!sidebarOpen" x-cloak class="border-white/10 my-2 mx-2">
+                    <a href="{{ route('transaksi.index') }}" 
+                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate {{ request()->routeIs('transaksi.*') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white' }}"
+                       style="animation-delay: 0.3s;"
+                       :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'">
+                        <span class="material-symbols-outlined !text-[22px] sidebar-transition {{ request()->routeIs('transaksi.*') ? 'text-tertiary' : 'text-white/40 group-hover:text-white' }}">receipt_long</span>
+                        <span x-show="sidebarOpen" class="ml-4 text-sm font-bold tracking-tight">Riwayat Transaksi</span>
+                        <span x-show="!sidebarOpen" class="sidebar-tooltip">Riwayat Transaksi</span>
+                        @if(request()->routeIs('transaksi.*'))
+                        <div class="absolute right-3 w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_8px_rgba(228,145,201,0.6)]"></div>
+                        @endif
+                    </a>
+                </div>
             </div>
 
-            <a href="{{ route('kategori.index') }}" 
-               :class="sidebarOpen ? 'px-3 justify-start' : 'px-0 justify-center'"
-               class="flex items-center py-2.5 rounded-md transition-colors whitespace-nowrap {{ request()->routeIs('kategori.*') ? 'bg-secondary text-white' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                <span x-show="sidebarOpen" x-cloak class="ml-3 text-sm">Kategori Produk</span>
-            </a>
+            <!-- Group: Management (Admin Only) -->
+            @if(auth()->user()->isAdmin())
+            <div>
+                <p x-show="sidebarOpen" class="px-4 text-[10px] font-black uppercase tracking-[0.15em] text-white/30 mb-3 nav-item-animate" style="animation-delay: 0.4s;">Manajemen</p>
+                <div class="space-y-1">
+                    <a href="{{ route('kategori.index') }}" 
+                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate {{ request()->routeIs('kategori.*') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white' }}"
+                       style="animation-delay: 0.5s;"
+                       :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'">
+                        <span class="material-symbols-outlined !text-[22px] sidebar-transition {{ request()->routeIs('kategori.*') ? 'text-tertiary' : 'text-white/40 group-hover:text-white' }}">category</span>
+                        <span x-show="sidebarOpen" class="ml-4 text-sm font-bold tracking-tight">Kategori Menu</span>
+                        <span x-show="!sidebarOpen" class="sidebar-tooltip">Kategori Menu</span>
+                        @if(request()->routeIs('kategori.*'))
+                        <div class="absolute right-3 w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_8px_rgba(228,145,201,0.6)]"></div>
+                        @endif
+                    </a>
 
-            <a href="{{ route('menu.index') }}" 
-               :class="sidebarOpen ? 'px-3 justify-start' : 'px-0 justify-center'"
-               class="flex items-center py-2.5 rounded-md transition-colors whitespace-nowrap {{ request()->routeIs('menu.*') ? 'bg-secondary text-white' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                <span x-show="sidebarOpen" x-cloak class="ml-3 text-sm">Katalog Menu</span>
-            </a>
+                    <a href="{{ route('menu.index') }}" 
+                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate {{ request()->routeIs('menu.*') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white' }}"
+                       style="animation-delay: 0.6s;"
+                       :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'">
+                        <span class="material-symbols-outlined !text-[22px] sidebar-transition {{ request()->routeIs('menu.*') ? 'text-tertiary' : 'text-white/40 group-hover:text-white' }}">restaurant_menu</span>
+                        <span x-show="sidebarOpen" class="ml-4 text-sm font-bold tracking-tight">Katalog Menu</span>
+                        <span x-show="!sidebarOpen" class="sidebar-tooltip">Katalog Menu</span>
+                        @if(request()->routeIs('menu.*'))
+                        <div class="absolute right-3 w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_8px_rgba(228,145,201,0.6)]"></div>
+                        @endif
+                    </a>
 
-            <a href="{{ route('laporan.index') }}" 
-               :class="sidebarOpen ? 'px-3 justify-start' : 'px-0 justify-center'"
-               class="flex items-center py-2.5 rounded-md transition-colors whitespace-nowrap {{ request()->routeIs('laporan.*') ? 'bg-secondary text-white' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                <span x-show="sidebarOpen" x-cloak class="ml-3 text-sm">Laporan Penjualan</span>
-            </a>
+                    <a href="{{ route('laporan.index') }}" 
+                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate {{ request()->routeIs('laporan.*') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white' }}"
+                       style="animation-delay: 0.7s;"
+                       :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'">
+                        <span class="material-symbols-outlined !text-[22px] sidebar-transition {{ request()->routeIs('laporan.*') ? 'text-tertiary' : 'text-white/40 group-hover:text-white' }}">analytics</span>
+                        <span x-show="sidebarOpen" class="ml-4 text-sm font-bold tracking-tight">Laporan Sales</span>
+                        <span x-show="!sidebarOpen" class="sidebar-tooltip">Laporan Sales</span>
+                        @if(request()->routeIs('laporan.*'))
+                        <div class="absolute right-3 w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_8px_rgba(228,145,201,0.6)]"></div>
+                        @endif
+                    </a>
+                </div>
+            </div>
 
-            <a href="{{ route('pengguna.index') }}" 
-               :class="sidebarOpen ? 'px-3 justify-start' : 'px-0 justify-center'"
-               class="flex items-center py-2.5 rounded-md transition-colors whitespace-nowrap {{ request()->routeIs('pengguna.*') ? 'bg-secondary text-white' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                <span x-show="sidebarOpen" x-cloak class="ml-3 text-sm">Otorisasi Akses</span>
-            </a>
+            <div>
+                <p x-show="sidebarOpen" class="px-4 text-[10px] font-black uppercase tracking-[0.15em] text-white/30 mb-3 nav-item-animate" style="animation-delay: 0.8s;">Pengaturan</p>
+                <div class="space-y-1">
+                    <a href="{{ route('pengguna.index') }}" 
+                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate {{ request()->routeIs('pengguna.*') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white' }}"
+                       style="animation-delay: 0.9s;"
+                       :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'">
+                        <span class="material-symbols-outlined !text-[22px] sidebar-transition {{ request()->routeIs('pengguna.*') ? 'text-tertiary' : 'text-white/40 group-hover:text-white' }}">admin_panel_settings</span>
+                        <span x-show="sidebarOpen" class="ml-4 text-sm font-bold tracking-tight">Akses Pengguna</span>
+                        <span x-show="!sidebarOpen" class="sidebar-tooltip">Akses Pengguna</span>
+                        @if(request()->routeIs('pengguna.*'))
+                        <div class="absolute right-3 w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_8px_rgba(228,145,201,0.6)]"></div>
+                        @endif
+                    </a>
+                </div>
+            </div>
             @endif
-        </nav>
+        </div>
 
         <!-- User Profile Bottom -->
-        <div class="border-t border-white/10 p-3 shrink-0" x-data="{ userOpen: false }">
-            <div class="relative">
-                <button @click="userOpen = !userOpen" @click.away="userOpen = false" class="w-full flex items-center justify-between p-2 rounded-md hover:bg-white/10 transition-colors focus:outline-none">
+        <div class="p-4 shrink-0 border-t border-white/10 bg-black/10">
+            <div x-data="{ userOpen: false }" class="relative">
+                <button @click="userOpen = !userOpen" @click.away="userOpen = false" class="w-full group p-2.5 rounded-xl hover:bg-white/5 transition-all duration-200 focus:outline-none">
                     <div class="flex items-center gap-3 overflow-hidden">
-                        <div class="w-8 h-8 rounded bg-white flex items-center justify-center text-primary text-sm font-black shrink-0 shadow-sm border border-transparent">
+                        <div class="w-10 h-10 rounded-lg bg-tertiary/10 flex items-center justify-center text-tertiary text-sm font-black shrink-0 border border-tertiary/20">
                             {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                         </div>
-                        <div x-show="sidebarOpen" x-cloak class="flex flex-col items-start min-w-0 truncate text-left">
-                            <span class="text-sm font-bold text-white leading-tight truncate w-full">{{ auth()->user()->name }}</span>
-                            <span class="text-[10px] uppercase font-bold text-tertiary tracking-wider mt-0.5">{{ auth()->user()->role }}</span>
+                        <div x-show="sidebarOpen" x-transition.opacity class="flex flex-col items-start min-w-0 truncate text-left">
+                            <span class="text-xs font-bold text-white tracking-tight truncate w-full">{{ auth()->user()->name }}</span>
+                            <span class="text-[9px] uppercase font-black text-tertiary tracking-widest mt-0.5">{{ auth()->user()->role }}</span>
                         </div>
+                        <span x-show="sidebarOpen" class="material-symbols-outlined text-white/20 text-sm ml-auto group-hover:text-white transition-colors">expand_less</span>
                     </div>
                 </button>
                 
                 {{-- Dropdown Menu (Upwards) --}}
-                <div x-show="userOpen" x-transition.opacity x-cloak class="absolute bottom-full left-0 min-w-[200px] mb-2 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200 text-gray-800">
-                    <div class="px-4 py-3 border-b border-gray-100 bg-gray-50/50 rounded-t-md">
-                        <p class="text-sm font-bold text-gray-900">{{ auth()->user()->name }}</p>
-                        <p class="text-[10px] text-secondary uppercase font-bold tracking-wider mt-0.5">{{ auth()->user()->role }}</p>
+                <div x-show="userOpen" 
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 scale-95 translate-y-2"
+                     x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                     x-transition:leave-end="opacity-0 scale-95 translate-y-2"
+                     x-cloak class="absolute bottom-full left-0 w-full mb-3 bg-[#1e204a] rounded-xl shadow-2xl py-2 z-50 border border-white/10 text-white/80">
+                    
+                    <div class="px-4 py-2 border-b border-white/5 mb-1">
+                        <p class="text-xs font-bold text-white truncate">{{ auth()->user()->name }}</p>
+                        <p class="text-[9px] text-tertiary uppercase font-black tracking-widest mt-1">{{ auth()->user()->role }}</p>
                     </div>
-                    <div class="py-1">
-                        <a href="{{ route('profile.show') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 font-bold transition-colors">
-                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                            Profil & Keamanan
-                        </a>
-                    </div>
-                    <div class="border-t border-gray-100">
+
+                    <a href="{{ route('profile.show') }}" class="flex items-center gap-3 px-4 py-2.5 text-xs font-bold hover:bg-white/5 hover:text-white transition-colors">
+                        <span class="material-symbols-outlined !text-[18px]">manage_accounts</span>
+                        Profil & Keamanan
+                    </a>
+
+                    <div class="mt-1 pt-1 border-t border-white/5">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 font-bold transition-colors flex items-center gap-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                                Keluar Sign Out
+                            <button type="submit" class="w-full text-left px-4 py-2.5 text-xs text-red-400 hover:bg-red-400/10 font-bold transition-colors flex items-center gap-3">
+                                <span class="material-symbols-outlined !text-[18px]">logout</span>
+                                Keluar Sistem
                             </button>
                         </form>
                     </div>
@@ -151,7 +281,7 @@
     </aside>
 
     <!-- Main Content Context -->
-    <div :class="sidebarOpen ? 'lg:ml-72' : 'lg:ml-20'" class="transition-all duration-300 min-h-screen flex flex-col pt-16">
+    <div :class="sidebarOpen ? 'lg:ml-[280px]' : 'lg:ml-20'" class="transition-all duration-300 min-h-screen flex flex-col pt-16">
         
         <!-- Header -->
         <header class="fixed top-0 right-0 left-0 bg-white border-b border-gray-200 z-20 h-16 flex items-center justify-between px-4 lg:px-6 transition-all duration-300"
@@ -190,7 +320,7 @@
 
         <!-- Flash Messages -->
         @if(session('success'))
-        <div x-data="{ show: true }" x-show="show" x-transition class="m-4 lg:m-6 mb-0 p-4 bg-green-50 border border-green-200 rounded-md flex items-start gap-3 text-green-800 text-sm shadow-sm relative">
+        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" x-transition class="m-4 lg:m-6 mb-0 p-4 bg-green-50 border border-green-200 rounded-md flex items-start gap-3 text-green-800 text-sm shadow-sm relative">
             <svg class="w-5 h-5 text-green-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             <span class="flex-1 font-bold">{{ session('success') }}</span>
             <button @click="show = false" class="absolute top-4 right-4 text-green-600 hover:text-green-800">
@@ -200,7 +330,7 @@
         @endif
         
         @if($errors->any())
-        <div x-data="{ show: true }" x-show="show" x-transition class="m-4 lg:m-6 mb-0 p-4 bg-red-50 border border-red-200 rounded-md flex items-start gap-3 text-red-800 text-sm shadow-sm relative">
+        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" x-transition class="m-4 lg:m-6 mb-0 p-4 bg-red-50 border border-red-200 rounded-md flex items-start gap-3 text-red-800 text-sm shadow-sm relative">
             <svg class="w-5 h-5 text-red-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
             <div class="flex-1 font-bold pr-4">
                 <ul class="list-disc list-inside">

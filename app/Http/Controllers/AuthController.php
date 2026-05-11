@@ -18,31 +18,30 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'username' => 'required',
             'password' => 'required',
         ], [
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
+            'username.required' => 'Username/Email wajib diisi.',
             'password.required' => 'Password wajib diisi.',
         ]);
 
-        $credentials = $request->only('email', 'password');
-        $remember = $request->boolean('remember');
+        $credentials = [
+            'email' => $request->username,
+            'password' => $request->password
+        ];
 
-        if (Auth::attempt($credentials, $remember)) {
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
             if (!Auth::user()->is_active) {
                 Auth::logout();
-                return back()->withErrors(['email' => 'Akun Anda telah dinonaktifkan.']);
+                return back()->with('error', 'Akun Anda telah dinonaktifkan.');
             }
 
             return redirect()->route('dashboard');
         }
 
-        return back()->withErrors([
-            'email' => 'Email atau password salah.',
-        ])->withInput($request->only('email'));
+        return back()->with('error', 'Username atau password salah.')->withInput($request->only('username'));
     }
 
     public function logout(Request $request)

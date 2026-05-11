@@ -19,6 +19,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Root redirect
 Route::get('/', fn() => redirect()->route('dashboard'));
 
+// Midtrans Callback (Public)
+Route::post('/midtrans/callback', [\App\Http\Controllers\MidtransController::class, 'callback'])->name('midtrans.callback');
+
 // Authenticated routes — Kasir & Admin
 Route::middleware('auth')->group(function () {
 
@@ -34,18 +37,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/transaksi/create', [TransaksiController::class, 'create'])->name('transaksi.create');
     Route::post('/transaksi', [TransaksiController::class, 'store'])->name('transaksi.store');
     Route::get('/transaksi/{transaksi}', [TransaksiController::class, 'show'])->name('transaksi.show');
+    Route::post('/transaksi/{transaksi}/success', [TransaksiController::class, 'markAsSuccess'])->name('transaksi.mark-as-success');
 
-    // Inventaris — Kasir read-only, Admin full CRUD
-    Route::get('/inventaris', [InventarisController::class, 'index'])->name('inventaris.index');
-
-    // Admin-only: Inventaris CRUD
-    Route::middleware('role:admin')->group(function () {
-        Route::get('/inventaris/create', [InventarisController::class, 'create'])->name('inventaris.create');
-        Route::post('/inventaris', [InventarisController::class, 'store'])->name('inventaris.store');
-        Route::get('/inventaris/{inventaris}/edit', [InventarisController::class, 'edit'])->name('inventaris.edit');
-        Route::put('/inventaris/{inventaris}', [InventarisController::class, 'update'])->name('inventaris.update');
-        Route::delete('/inventaris/{inventaris}', [InventarisController::class, 'destroy'])->name('inventaris.destroy');
-    });
 
     // Admin-only: Batalkan transaksi
     Route::delete('/transaksi/{transaksi}', [TransaksiController::class, 'destroy'])

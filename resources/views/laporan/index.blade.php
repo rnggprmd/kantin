@@ -10,7 +10,7 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 border-b border-gray-200">
             <div>
                 <h2 class="text-xl font-bold text-gray-900 tracking-tight">Laporan Keuangan & Penjualan</h2>
-                <p class="text-xs text-gray-500 font-medium">Analisis akumulasi pendapatan dan statistik traksi produk secara komprehensif.</p>
+                <p class="text-xs text-gray-500 font-medium">Analisis akumulasi pendapatan dan statistik traksi menu secara komprehensif.</p>
             </div>
             <div class="flex gap-2">
                 <a href="{{ route('laporan.pdf', request()->all()) }}"
@@ -109,7 +109,7 @@
         {{-- Menu Terlaris --}}
         <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm flex flex-col">
             <div class="px-5 py-4 border-b border-gray-200 bg-gray-50/30">
-                <h3 class="font-black text-gray-900 text-[11px] uppercase tracking-widest">Peringkat Produk</h3>
+                <h3 class="font-black text-gray-900 text-[11px] uppercase tracking-widest">Peringkat Menu</h3>
             </div>
             <div class="p-5 space-y-4 flex-1 overflow-y-auto">
                 @forelse($menuTerlaris as $i => $menu)
@@ -129,7 +129,7 @@
                 @empty
                 <div class="h-full flex flex-col items-center justify-center py-12 text-center">
                     <svg class="w-8 h-8 text-gray-200 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                    <p class="text-gray-400 text-[11px] font-semibold">Produk nihil terjual</p>
+                    <p class="text-gray-400 text-[11px] font-semibold">Menu nihil terjual</p>
                 </div>
                 @endforelse
             </div>

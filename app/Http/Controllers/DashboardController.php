@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Inventaris;
 use App\Models\Menu;
 use App\Models\Transaksi;
 use Illuminate\Support\Facades\DB;
@@ -28,7 +27,6 @@ class DashboardController extends Controller
 
         // Stok hampir habis
         $stokMenuRendah = Menu::where('stok', '<=', 5)->where('is_tersedia', true)->count();
-        $stokInventarisRendah = Inventaris::whereColumn('stok', '<=', 'stok_minimum')->count();
 
         // Transaksi terbaru
         $transaksiTerbaru = Transaksi::with('user')
@@ -64,7 +62,6 @@ class DashboardController extends Controller
             'pendapatanHariIni',
             'transaksiPending',
             'stokMenuRendah',
-            'stokInventarisRendah',
             'transaksiTerbaru',
             'grafikData',
             'menuTerlaris'

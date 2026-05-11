@@ -16,6 +16,7 @@ class Transaksi extends Model
         'kembalian',
         'status',
         'catatan',
+        'snap_token',
         'payment_ref',
         'payment_status',
         'paid_at',
@@ -54,5 +55,14 @@ class Transaksi extends Model
             'batal' => 'bg-red-100 text-red-700',
             default => 'bg-gray-100 text-gray-700',
         };
+    }
+
+    public function restoreStock()
+    {
+        foreach ($this->details as $detail) {
+            if ($detail->menu) {
+                $detail->menu->increment('stok', $detail->qty);
+            }
+        }
     }
 }

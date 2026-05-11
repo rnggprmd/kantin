@@ -9,7 +9,7 @@
     <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 border-b border-gray-200">
             <div>
-                <h2 class="text-xl font-bold text-gray-900 tracking-tight">Katalog Produk</h2>
+                <h2 class="text-xl font-bold text-gray-900 tracking-tight">Katalog Menu</h2>
                 <p class="text-xs text-gray-500 font-medium">Manajemen penawaran makanan dan minuman.</p>
             </div>
             <a href="{{ route('menu.create') }}"

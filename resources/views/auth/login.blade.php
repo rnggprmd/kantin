@@ -2,41 +2,149 @@
 @section('title', 'Masuk')
 
 @section('content')
-<div class="text-center mb-8">
-    <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary text-tertiary mb-4 shadow-lg">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-    </div>
-    <h1 class="text-2xl font-bold text-primary mb-1">Kantin Maria</h1>
-    <p class="text-gray-500 text-sm">Masuk untuk mengelola sistem kantin</p>
-</div>
+<main class="flex w-full h-screen">
 
-<div class="bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
-    @if(session('error'))
-    <div class="bg-red-50 text-red-600 p-3 rounded-md text-sm mb-5 border border-red-200">
-        {{ session('error') }}
-    </div>
-    @endif
+    {{-- ===== LEFT PANEL: Hero Image ===== --}}
+    <section class="hidden lg:flex flex-1 relative items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0 overflow-hidden">
+            <img class="w-full h-full object-cover animate-slow-zoom"
+                 src="https://images.unsplash.com/photo-1574096079513-d8259312b785?q=80&w=2070&auto=format&fit=crop"
+                 alt="Kantin Interior">
+            <div class="absolute inset-0 mix-blend-multiply" style="background-color:rgba(21,23,61,0.82);"></div>
+        </div>
+        <div class="relative z-10 px-14 max-w-xl text-white">
+            <div class="flex items-center gap-4 mb-8 animate-fade-in-up" style="animation-delay: 0.2s; opacity: 0;">
+                <span class="material-symbols-outlined" style="font-size:52px;color:#ffd7f6;">restaurant</span>
+                <h1 class="font-headline font-extrabold text-4xl tracking-tight">Kantin Maria</h1>
+            </div>
+            <h2 class="font-headline font-bold text-3xl leading-tight mb-5 animate-fade-in-up" style="animation-delay: 0.4s; opacity: 0;">
+                Tingkatkan pengalaman<br>makan di sekolah Anda.
+            </h2>
+            <p class="text-white/75 text-lg leading-relaxed animate-fade-in-up" style="animation-delay: 0.6s; opacity: 0;">
+                Perencanaan makan efisien, pembayaran lancar, dan kejelasan nutrisi untuk komunitas sekolah modern.
+            </p>
+            <div class="mt-10 grid grid-cols-2 gap-4">
+                <div class="rounded-2xl p-5 border border-white/20 animate-fade-in-up" style="background:rgba(255,255,255,0.1);backdrop-filter:blur(12px); animation-delay: 0.8s; opacity: 0;">
+                    <span class="material-symbols-outlined block mb-3" style="color:#ffd7f6;font-size:28px;">bolt</span>
+                    <p class="text-[11px] uppercase tracking-widest text-white/55 font-semibold mb-1">Akses Cepat</p>
+                    <p class="font-headline font-bold text-lg">Pembayaran Kilat</p>
+                </div>
+                <div class="rounded-2xl p-5 border border-white/20 animate-fade-in-up" style="background:rgba(255,255,255,0.1);backdrop-filter:blur(12px); animation-delay: 1s; opacity: 0;">
+                    <span class="material-symbols-outlined block mb-3" style="color:#ffd7f6;font-size:28px;">health_and_safety</span>
+                    <p class="text-[11px] uppercase tracking-widest text-white/55 font-semibold mb-1">Keamanan Utama</p>
+                    <p class="font-headline font-bold text-lg">Kontrol Nutrisi</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <form method="POST" action="{{ route('login.post') }}" class="space-y-5">
-        @csrf
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1.5">Email Akses</label>
-            <input type="email" name="email" required autofocus
-                   class="w-full bg-white border border-gray-300 text-gray-900 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors"
-                   placeholder="nama@kantinmaria.com" value="{{ old('email') }}">
+    {{-- ===== RIGHT PANEL: Login Form ===== --}}
+    <section class="flex-1 flex flex-col relative overflow-hidden" style="background:#f8f9fa;">
+
+        {{-- Floating decorative icons --}}
+        <span class="material-symbols-outlined floating-icon float-1">restaurant</span>
+        <span class="material-symbols-outlined floating-icon float-2">eco</span>
+        <span class="material-symbols-outlined floating-icon float-3">local_cafe</span>
+
+        {{-- Scrollable area --}}
+        <div class="flex-1 flex items-center justify-center overflow-y-auto px-6 sm:px-16 py-10 relative z-10">
+            <div class="w-full max-w-[420px] animate-breath">
+
+                {{-- Mobile logo --}}
+                <div class="flex lg:hidden items-center gap-3 mb-8">
+                    <span class="material-symbols-outlined" style="color:#15173d;font-size:34px;">restaurant</span>
+                    <span class="font-headline font-extrabold text-2xl" style="color:#15173d;">Kantin Maria</span>
+                </div>
+
+                {{-- Heading --}}
+                <div class="mb-8">
+                    <h3 class="font-headline font-bold text-[32px] leading-tight mb-2 animate-slide-in" style="color:#191c1d;">
+                        Selamat Datang
+                    </h3>
+                    <p class="text-[15px]" style="color:#46464e;">
+                        Silakan masukkan detail Anda untuk mengakses akun.
+                    </p>
+                </div>
+
+                {{-- Error alert --}}
+                @if(session('error') || $errors->any())
+                <div class="flex items-center gap-3 p-4 rounded-2xl mb-6 text-sm font-medium"
+                     style="background:#ffdad6;color:#93000a;border:1px solid rgba(186,26,26,0.25);">
+                    <span class="material-symbols-outlined shrink-0" style="font-size:20px;">error</span>
+                    {{ session('error') ?? $errors->first() }}
+                </div>
+                @endif
+
+                {{-- Form --}}
+                <form method="POST" action="{{ route('login.post') }}">
+                    @csrf
+
+                    {{-- Space between fields --}}
+                    <div class="flex flex-col gap-5">
+
+                        {{-- Username --}}
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase tracking-widest mb-2"
+                                   style="color:#46464e;" for="username">Username</label>
+                            <div class="relative">
+                                <input
+                                    id="username" name="username" type="text"
+                                    placeholder="Masukkan username Anda"
+                                    value="{{ old('username') }}"
+                                    required autofocus
+                                    class="w-full rounded-2xl text-sm transition-all outline-none"
+                                    style="padding:13px 48px 13px 18px;background:#fff;border:1.5px solid #c7c5cf;color:#191c1d;"
+                                />
+                                <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none"
+                                      style="font-size:20px;color:#77767f;">person</span>
+                            </div>
+                        </div>
+
+                        {{-- Password --}}
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="text-[11px] font-bold uppercase tracking-widest"
+                                       style="color:#46464e;" for="password">Kata Sandi</label>
+                            </div>
+                            <div class="relative">
+                                <input
+                                    id="password" name="password" type="password"
+                                    placeholder="••••••••"
+                                    required
+                                    class="w-full rounded-2xl text-sm transition-all outline-none"
+                                    style="padding:13px 48px 13px 18px;background:#fff;border:1.5px solid #c7c5cf;color:#191c1d;"
+                                />
+                                <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none"
+                                      style="font-size:20px;color:#77767f;">lock</span>
+                            </div>
+                        </div>
+
+                        {{-- Divider --}}
+                        <div class="pt-2">
+                            <div class="border-t w-full" style="border-color:rgba(199,197,207,0.5);"></div>
+                        </div>
+
+                        {{-- Submit --}}
+                        <button type="submit"
+                                class="btn-liquid w-full py-3.5 rounded-2xl font-headline font-bold text-base flex items-center justify-center gap-2 shadow-md transition-transform active:scale-[0.98]"
+                                style="background:#9d2a9d;color:#fff;">
+                            <span>Masuk</span>
+                            <span class="material-symbols-outlined" style="font-size:20px;">arrow_forward</span>
+                        </button>
+
+                    </div>
+                </form>
+
+            </div>
         </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1.5">Kata Sandi</label>
-            <input type="password" name="password" required
-                   class="w-full bg-white border border-gray-300 text-gray-900 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors"
-                   placeholder="••••••••">
-        </div>
-        <button type="submit" class="w-full py-2.5 bg-primary hover:bg-secondary text-white rounded-md text-sm font-semibold transition-colors duration-300 shadow-md">
-            Masuk ke Sistem
-        </button>
-    </form>
-</div>
-<div class="text-center mt-6 text-xs text-gray-400">
-    &copy; {{ date('Y') }} Kantin Maria. Enterprise Management.
-</div>
+
+        {{-- Footer --}}
+        <footer class="shrink-0 text-center py-4 px-6" style="border-top:1px solid rgba(199,197,207,0.4);">
+            <p class="text-[11px]" style="color:#77767f;">
+                © {{ date('Y') }} Sistem Kantin Maria &bull; Kebijakan Privasi &bull; Ketentuan Layanan
+            </p>
+        </footer>
+
+    </section>
+</main>
 @endsection
