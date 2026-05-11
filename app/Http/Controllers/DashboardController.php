@@ -25,8 +25,8 @@ class DashboardController extends Controller
             ->where('status', 'pending')
             ->count();
 
-        // Stok hampir habis
-        $stokMenuRendah = Menu::where('stok', '<=', 5)->where('is_tersedia', true)->count();
+        // Total Menu Aktif
+        $totalMenuAktif = Menu::where('is_tersedia', true)->count();
 
         // Transaksi terbaru
         $transaksiTerbaru = Transaksi::with('user')
@@ -61,7 +61,7 @@ class DashboardController extends Controller
             'transaksiHariIni',
             'pendapatanHariIni',
             'transaksiPending',
-            'stokMenuRendah',
+            'totalMenuAktif',
             'transaksiTerbaru',
             'grafikData',
             'menuTerlaris'

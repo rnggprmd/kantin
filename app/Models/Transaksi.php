@@ -57,12 +57,5 @@ class Transaksi extends Model
         };
     }
 
-    public function restoreStock()
-    {
-        foreach ($this->details as $detail) {
-            if ($detail->menu) {
-                $detail->menu->increment('stok', $detail->qty);
-            }
-        }
-    }
+
 }

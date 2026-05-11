@@ -2,103 +2,234 @@
 @section('title', 'Dashboard')
 @section('page-title', 'Overview Kinerja')
 
+@push('styles')
+<style>
+    .stat-card {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%);
+        pointer-events: none;
+    }
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px -12px rgba(0,0,0,0.2);
+    }
+    .stat-card .card-glow {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        filter: blur(30px);
+        opacity: 0.3;
+        right: -10px;
+        bottom: -10px;
+    }
+    @keyframes fadeSlideUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    .anim-card { animation: fadeSlideUp 0.5s ease both; }
+    .anim-card:nth-child(1) { animation-delay: 0.05s; }
+    .anim-card:nth-child(2) { animation-delay: 0.10s; }
+    .anim-card:nth-child(3) { animation-delay: 0.15s; }
+    .anim-card:nth-child(4) { animation-delay: 0.20s; }
+
+    @keyframes fadeSlideUpPanel {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    .anim-panel { animation: fadeSlideUpPanel 0.55s ease both; }
+    .anim-panel:nth-child(1) { animation-delay: 0.25s; }
+    .anim-panel:nth-child(2) { animation-delay: 0.35s; }
+
+    .progress-bar-track {
+        background: rgba(255,255,255,0.08);
+        border-radius: 999px;
+        height: 6px;
+        overflow: hidden;
+    }
+    .progress-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #E491C9, #982598);
+        transition: width 1s ease;
+    }
+    .rank-badge {
+        width: 28px; height: 28px;
+        border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 11px; font-weight: 900;
+        flex-shrink: 0;
+    }
+    tr.txn-row { transition: background 0.2s; }
+    tr.txn-row:hover td { background: #f5f3ff; }
+
+    .hero-banner {
+        background: linear-gradient(135deg, #15173D 0%, #2d1b69 50%, #15173D 100%);
+        position: relative;
+        overflow: hidden;
+    }
+    .hero-banner::after {
+        content: '';
+        position: absolute;
+        top: -30px; right: -30px;
+        width: 200px; height: 200px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(228,145,201,0.2) 0%, transparent 70%);
+    }
+</style>
+@endpush
+
 @section('content')
 <div class="space-y-6">
 
-    @if(auth()->user()->isAdmin())
-    
-    {{-- Header Section (Flat SaaS Style) --}}
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 pb-2 border-b border-gray-200">
-        <div>
-            <h2 class="text-xl font-bold text-gray-900 tracking-tight">Ringkasan Operasional</h2>
-            <p class="text-sm text-gray-500 font-medium">Data performa sistem pada hari ini ({{ now()->translatedFormat('d F Y') }}).</p>
-        </div>
-        <div class="shrink-0 flex items-center bg-white border border-gray-300 rounded-md px-3 py-1.5 shadow-sm text-sm font-semibold text-gray-700">
-            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            Hari Ini
+    {{-- Hero Banner --}}
+    <div class="hero-banner rounded-2xl p-6 lg:p-8 text-white shadow-xl">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative z-10">
+            <div>
+                <p class="text-tertiary text-xs font-black uppercase tracking-[0.2em] mb-1">
+                    {{ now()->translatedFormat('l, d F Y') }}
+                </p>
+                <h2 class="text-2xl lg:text-3xl font-black leading-tight">
+                    Selamat datang, <span class="text-tertiary">{{ Str::words(auth()->user()->name, 1, '') }}</span>!
+                </h2>
+                <p class="text-white/50 text-sm font-medium mt-1">
+                    @if(auth()->user()->isAdmin())
+                        Panel Admin — Pantau kinerja operasional kantin Anda hari ini.
+                    @else
+                        Panel Kasir — Siap melayani transaksi hari ini.
+                    @endif
+                </p>
+            </div>
+
         </div>
     </div>
 
+    @if(auth()->user()->isAdmin())
+
+    {{-- Stat Cards (Admin) --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {{-- Pendapatan Hari Ini --}}
-        <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-            <div class="flex justify-between items-start mb-3">
-                <p class="text-xs text-gray-500 uppercase tracking-wider font-bold">Pendapatan Kotor</p>
-                <div class="p-1.5 bg-gray-50 rounded-md text-gray-400 border border-gray-100">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+
+        {{-- Pendapatan --}}
+        <div class="stat-card anim-card rounded-2xl p-5 shadow-lg"
+             style="background: linear-gradient(135deg, #1e3a5f 0%, #15173D 100%); border: 1px solid rgba(255,255,255,0.06);">
+            <div class="card-glow" style="background: #3b82f6;"></div>
+            <div class="flex justify-between items-start mb-4">
+                <div class="w-11 h-11 rounded-xl flex items-center justify-center" style="background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.2);">
+                    <span class="material-symbols-outlined text-blue-400 !text-[22px]">payments</span>
                 </div>
+                <span class="text-[10px] text-blue-300/60 font-black uppercase tracking-widest">Hari Ini</span>
             </div>
-            <p class="text-2xl font-black text-gray-900 tracking-tight">Rp {{ number_format($pendapatanHariIni, 0, ',', '.') }}</p>
+            <p class="text-[11px] text-blue-300/50 uppercase tracking-wider font-bold mb-1">Pendapatan Kotor</p>
+            <p class="text-2xl font-black text-white tracking-tight">Rp {{ number_format($pendapatanHariIni, 0, ',', '.') }}</p>
         </div>
 
-        {{-- Transaksi Hari Ini --}}
-        <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-            <div class="flex justify-between items-start mb-3">
-                <p class="text-xs text-gray-500 uppercase tracking-wider font-bold">Total Transaksi</p>
-                <div class="p-1.5 bg-gray-50 rounded-md text-gray-400 border border-gray-100">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        {{-- Transaksi --}}
+        <div class="stat-card anim-card rounded-2xl p-5 shadow-lg"
+             style="background: linear-gradient(135deg, #2d1b69 0%, #15173D 100%); border: 1px solid rgba(255,255,255,0.06);">
+            <div class="card-glow" style="background: #a855f7;"></div>
+            <div class="flex justify-between items-start mb-4">
+                <div class="w-11 h-11 rounded-xl flex items-center justify-center" style="background: rgba(168,85,247,0.15); border: 1px solid rgba(168,85,247,0.2);">
+                    <span class="material-symbols-outlined text-purple-400 !text-[22px]">receipt_long</span>
                 </div>
+                <span class="text-[10px] text-purple-300/60 font-black uppercase tracking-widest">Hari Ini</span>
             </div>
-            <p class="text-2xl font-black text-gray-900 tracking-tight">{{ $transaksiHariIni }} <span class="text-sm font-semibold text-gray-400 normal-case tracking-normal">nota</span></p>
+            <p class="text-[11px] text-purple-300/50 uppercase tracking-wider font-bold mb-1">Total Transaksi</p>
+            <p class="text-2xl font-black text-white tracking-tight">{{ $transaksiHariIni }} <span class="text-sm font-semibold text-white/30">nota</span></p>
         </div>
 
-        {{-- Transaksi Pending --}}
-        <a href="{{ route('transaksi.index', ['status' => 'pending']) }}" class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:border-amber-300 hover:shadow-md transition-all group">
-            <div class="flex justify-between items-start mb-3">
-                <p class="text-[11px] text-amber-600 uppercase tracking-wider font-bold">Tagihan Belum Lunas</p>
-                <div class="p-1.5 bg-amber-50 rounded-md text-amber-500 border border-amber-100 group-hover:bg-amber-100 transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        {{-- Pending --}}
+        <a href="{{ route('transaksi.index', ['status' => 'pending']) }}"
+           class="stat-card anim-card rounded-2xl p-5 shadow-lg block"
+           style="background: linear-gradient(135deg, #451a03 0%, #15173D 100%); border: 1px solid rgba(255,255,255,0.06);">
+            <div class="card-glow" style="background: #f59e0b;"></div>
+            <div class="flex justify-between items-start mb-4">
+                <div class="w-11 h-11 rounded-xl flex items-center justify-center" style="background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.2);">
+                    <span class="material-symbols-outlined text-amber-400 !text-[22px]">hourglass_top</span>
                 </div>
+                <span class="text-[10px] text-amber-300/60 font-black uppercase tracking-widest">Pending</span>
             </div>
-            <p class="text-2xl font-black {{ $transaksiPending > 0 ? 'text-amber-600' : 'text-gray-900' }} tracking-tight">{{ $transaksiPending }} <span class="text-sm font-semibold text-amber-500/70 normal-case tracking-normal">nota</span></p>
-        </a>
-
-        {{-- Peringatan Stok --}}
-        <a href="{{ route('menu.index') }}" class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:border-red-300 hover:shadow-md transition-all group">
-            <div class="flex justify-between items-start mb-3">
-                <p class="text-[11px] text-red-600 uppercase tracking-wider font-bold">Peringatan Stok Kritis</p>
-                <div class="p-1.5 bg-red-50 rounded-md text-red-500 border border-red-100 group-hover:bg-red-100 transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                </div>
-            </div>
-            <p class="text-2xl font-black {{ $stokMenuRendah > 0 ? 'text-red-600' : 'text-gray-900' }} tracking-tight">
-                {{ $stokMenuRendah }} <span class="text-sm font-semibold text-red-400 normal-case tracking-normal">Menu</span>
+            <p class="text-[11px] text-amber-300/50 uppercase tracking-wider font-bold mb-1">Belum Lunas</p>
+            <p class="text-2xl font-black {{ $transaksiPending > 0 ? 'text-amber-400' : 'text-white' }} tracking-tight">
+                {{ $transaksiPending }} <span class="text-sm font-semibold text-white/30">nota</span>
             </p>
         </a>
+
+        {{-- Total Menu --}}
+        <div class="stat-card anim-card rounded-2xl p-5 shadow-lg"
+             style="background: linear-gradient(135deg, #064e3b 0%, #15173D 100%); border: 1px solid rgba(255,255,255,0.06);">
+            <div class="card-glow" style="background: #10b981;"></div>
+            <div class="flex justify-between items-start mb-4">
+                <div class="w-11 h-11 rounded-xl flex items-center justify-center" style="background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.2);">
+                    <span class="material-symbols-outlined text-emerald-400 !text-[22px]">restaurant_menu</span>
+                </div>
+                <span class="text-[10px] text-emerald-300/60 font-black uppercase tracking-widest">Katalog</span>
+            </div>
+            <p class="text-[11px] text-emerald-300/50 uppercase tracking-wider font-bold mb-1">Menu Aktif</p>
+            <p class="text-2xl font-black text-white tracking-tight">
+                {{ $totalMenuAktif }} <span class="text-sm font-semibold text-white/30">item</span>
+            </p>
+        </div>
+
     </div>
     @endif
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {{-- Transaksi Terakhir --}}
-        <div class="bg-white border border-gray-200 rounded-xl shadow-sm flex flex-col">
-            <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+    {{-- Bottom Panels --}}
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-5">
+
+        {{-- Aktivitas Transaksi (wider) --}}
+        <div class="anim-panel lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                 <div>
-                    <h3 class="font-bold text-gray-900 text-sm">Aktivitas Transaksi</h3>
-                    <p class="text-xs text-gray-500">10 log transaksi terakhir</p>
+                    <h3 class="font-black text-gray-900 text-sm tracking-tight">Aktivitas Transaksi</h3>
+                    <p class="text-xs text-gray-400 font-medium mt-0.5">10 log transaksi terakhir</p>
                 </div>
-                <a href="{{ route('transaksi.index') }}" class="text-xs font-bold text-gray-600 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-md hover:bg-gray-100 transition-colors">Lihat Semua</a>
+                <a href="{{ route('transaksi.index') }}"
+                   class="text-[11px] font-black text-secondary bg-secondary/5 border border-secondary/10 px-3 py-1.5 rounded-lg hover:bg-secondary/10 transition-colors tracking-wide uppercase">
+                    Lihat Semua
+                </a>
             </div>
             <div class="overflow-x-auto flex-1">
                 <table class="w-full text-sm text-left">
-                    <thead class="bg-gray-50 text-gray-500 text-[11px] uppercase tracking-wider font-bold border-b border-gray-200">
-                        <tr>
-                            <th class="px-5 py-3">Waktu</th>
-                            <th class="px-5 py-3">Kode</th>
-                            <th class="px-5 py-3">Kasir</th>
-                            <th class="px-5 py-3 text-right">Total</th>
+                    <thead>
+                        <tr class="border-b border-gray-100">
+                            <th class="px-6 py-3 text-[10px] text-gray-400 font-black uppercase tracking-widest">Waktu</th>
+                            <th class="px-6 py-3 text-[10px] text-gray-400 font-black uppercase tracking-widest">Kode</th>
+                            <th class="px-6 py-3 text-[10px] text-gray-400 font-black uppercase tracking-widest">Kasir</th>
+                            <th class="px-6 py-3 text-[10px] text-gray-400 font-black uppercase tracking-widest text-right">Total</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100 font-medium">
+                    <tbody>
                         @forelse($transaksiTerbaru as $t)
-                        <tr class="hover:bg-gray-50 text-gray-800 transition-colors">
-                            <td class="px-5 py-3 text-gray-500 text-xs">{{ $t->created_at->format('H:i') }}</td>
-                            <td class="px-5 py-3 font-mono text-[11px] text-gray-600 tracking-tight">{{ $t->kode_transaksi }}</td>
-                            <td class="px-5 py-3">{{ $t->user?->name ?? 'Sistem' }}</td>
-                            <td class="px-5 py-3 text-right text-gray-900 font-bold tracking-tight">Rp {{ number_format($t->total_harga, 0, ',', '.') }}</td>
+                        <tr class="txn-row border-b border-gray-50 last:border-0">
+                            <td class="px-6 py-3.5">
+                                <span class="inline-flex items-center gap-1.5 text-gray-400 text-xs font-semibold">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse inline-block"></span>
+                                    {{ $t->created_at->format('H:i') }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-3.5">
+                                <code class="text-[11px] text-primary bg-primary/5 px-2 py-0.5 rounded font-bold tracking-tight">{{ $t->kode_transaksi }}</code>
+                            </td>
+                            <td class="px-6 py-3.5 text-gray-700 font-semibold text-sm">{{ $t->user?->name ?? 'Sistem' }}</td>
+                            <td class="px-6 py-3.5 text-right">
+                                <span class="text-gray-900 font-black text-sm tracking-tight">Rp {{ number_format($t->total_harga, 0, ',', '.') }}</span>
+                            </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="px-5 py-8 text-center text-gray-400">Belum ada transaksi tercatat.</td>
+                            <td colspan="4" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center gap-2">
+                                    <span class="material-symbols-outlined text-gray-200 !text-[40px]">receipt_long</span>
+                                    <p class="text-sm font-bold text-gray-400">Belum ada transaksi hari ini</p>
+                                </div>
+                            </td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -106,37 +237,48 @@
             </div>
         </div>
 
-        {{-- Menu Terlaris (30 Hari) --}}
-        <div class="bg-white border border-gray-200 rounded-xl shadow-sm flex flex-col">
-            <div class="px-5 py-4 border-b border-gray-100">
-                <h3 class="font-bold text-gray-900 text-sm">Menu Performa Tinggi</h3>
-                <p class="text-xs text-gray-500">Menu paling diminati (30 Hari Terakhir)</p>
+        {{-- Menu Performa Tinggi --}}
+        <div class="anim-panel lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col">
+            <div class="px-6 py-4 border-b border-gray-100">
+                <h3 class="font-black text-gray-900 text-sm tracking-tight">Menu Performa Tinggi</h3>
+                <p class="text-xs text-gray-400 font-medium mt-0.5">30 hari terakhir</p>
             </div>
-            <div class="p-5 space-y-4 flex-1">
+            <div class="p-6 space-y-5 flex-1">
                 @forelse($menuTerlaris as $i => $menu)
-                <div class="flex justify-between items-center group">
-                    <div class="flex items-center gap-3">
-                        <div class="w-7 h-7 rounded border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-400 font-bold text-[10px] group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-colors">
-                            #{{ $i + 1 }}
+                @php
+                    $max = $menuTerlaris->first()->total_terjual ?? 1;
+                    $pct = $max > 0 ? round(($menu->total_terjual / $max) * 100) : 0;
+                    $colors = [
+                        0 => ['bg' => 'bg-amber-400', 'text' => 'text-amber-700', 'card' => 'bg-amber-50 border-amber-100'],
+                        1 => ['bg' => 'bg-gray-400',  'text' => 'text-gray-600',  'card' => 'bg-gray-50 border-gray-100'],
+                        2 => ['bg' => 'bg-orange-400','text' => 'text-orange-700','card' => 'bg-orange-50 border-orange-100'],
+                    ];
+                    $c = $colors[$i] ?? ['bg' => 'bg-purple-400', 'text' => 'text-purple-700', 'card' => 'bg-purple-50 border-purple-100'];
+                @endphp
+                <div class="flex flex-col gap-2">
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="rank-badge {{ $c['card'] }} border {{ $c['text'] }}">
+                                #{{ $i + 1 }}
+                            </div>
+                            <p class="text-sm font-bold text-gray-800 truncate">{{ $menu->nama_menu }}</p>
                         </div>
-                        <div>
-                            <p class="text-sm font-bold text-gray-900 leading-tight">{{ $menu->nama_menu }}</p>
-                        </div>
+                        <span class="shrink-0 text-xs font-black {{ $c['text'] }}">{{ $menu->total_terjual }}×</span>
                     </div>
-                    <div class="text-right">
-                        <span class="inline-flex items-center px-2 py-1 rounded bg-green-50 text-green-700 text-xs font-bold ring-1 ring-inset ring-green-600/20">
-                            {{ $menu->total_terjual }} porsi
-                        </span>
+                    <div class="progress-bar-track bg-gray-100">
+                        <div class="progress-bar-fill" style="width: {{ $pct }}%; background: linear-gradient(90deg, {{ ['#f59e0b','#9ca3af','#f97316'][$i] ?? '#a855f7' }}, {{ ['#d97706','#6b7280','#ea580c'][$i] ?? '#7c3aed' }});"></div>
                     </div>
                 </div>
                 @empty
-                <div class="flex flex-col items-center justify-center h-full text-center py-8">
-                    <svg class="w-8 h-8 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                    <p class="text-sm font-semibold text-gray-500">Belum ada kompilasi data penjualan.</p>
+                <div class="flex flex-col items-center justify-center h-full py-8 text-center gap-3">
+                    <span class="material-symbols-outlined text-gray-200 !text-[48px]">restaurant_menu</span>
+                    <p class="text-sm font-bold text-gray-400">Belum ada data penjualan</p>
+                    <p class="text-xs text-gray-300">Data akan muncul setelah transaksi dilakukan</p>
                 </div>
                 @endforelse
             </div>
         </div>
+
     </div>
 </div>
 @endsection

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Midtrans\Config;
 use Midtrans\Snap;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class TransaksiController extends Controller
 {
@@ -41,7 +42,6 @@ class TransaksiController extends Controller
     {
         $menus = Menu::with('kategori')
             ->where('is_tersedia', true)
-            ->where('stok', '>', 0)
             ->get()
             ->groupBy('kategori.nama');
 
@@ -65,10 +65,6 @@ class TransaksiController extends Controller
 
             foreach ($request->items as $item) {
                 $menu = Menu::findOrFail($item['menu_id']);
-
-                if ($menu->stok < $item['qty']) {
-                    throw new \Exception("Stok {$menu->nama} tidak mencukupi.");
-                }
 
                 $subtotal = $menu->harga * $item['qty'];
                 $total += $subtotal;
@@ -112,9 +108,6 @@ class TransaksiController extends Controller
                     'qty' => $item['qty'],
                     'subtotal' => $item['subtotal'],
                 ]);
-
-                // Kurangi stok
-                $item['menu']->decrement('stok', $item['qty']);
             }
 
             // Handle Non-Tunai (Midtrans)
@@ -140,6 +133,9 @@ class TransaksiController extends Controller
                             'name' => $item['menu']->nama,
                         ];
                     })->toArray(),
+                    'callbacks' => [
+                        'finish' => route('transaksi.show', $transaksi->id),
+                    ],
                 ];
 
                 try {
@@ -155,7 +151,7 @@ class TransaksiController extends Controller
             if ($request->metode_bayar === 'non_tunai') {
                 return redirect()->route('transaksi.show', $transaksi->id)
                     ->with('success', 'Transaksi berhasil disimpan. Silahkan lakukan pembayaran.')
-                    ->with('snap_token', $transaksi->catatan);
+                    ->with('snap_token', $snapToken);
             }
 
             return redirect()->route('transaksi.show', $transaksi->id)
@@ -174,10 +170,7 @@ class TransaksiController extends Controller
 
     public function destroy(Transaksi $transaksi)
     {
-        // Kembalikan stok jika transaksi belum dibatalkan
-        if ($transaksi->status !== 'batal') {
-            $transaksi->restoreStock();
-        }
+        // Batalkan transaksi
 
         $transaksi->update(['status' => 'batal']);
 
@@ -196,5 +189,12 @@ class TransaksiController extends Controller
         }
 
         return response()->json(['status' => 'success']);
+    }
+
+    public function exportPdf(Transaksi $transaksi)
+    {
+        $transaksi->load(['user', 'details.menu']);
+        $pdf = Pdf::loadView('transaksi.pdf', compact('transaksi'))->setPaper('a4', 'portrait');
+        return $pdf->download('Nota-' . $transaksi->kode_transaksi . '.pdf');
     }
 }

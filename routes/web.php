@@ -37,6 +37,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/transaksi/create', [TransaksiController::class, 'create'])->name('transaksi.create');
     Route::post('/transaksi', [TransaksiController::class, 'store'])->name('transaksi.store');
     Route::get('/transaksi/{transaksi}', [TransaksiController::class, 'show'])->name('transaksi.show');
+    Route::get('/transaksi/{transaksi}/pdf', [TransaksiController::class, 'exportPdf'])->name('transaksi.pdf');
     Route::post('/transaksi/{transaksi}/success', [TransaksiController::class, 'markAsSuccess'])->name('transaksi.mark-as-success');
 
 
@@ -45,12 +46,15 @@ Route::middleware('auth')->group(function () {
         ->name('transaksi.destroy')
         ->middleware('role:admin');
 
+    // Menu & Kategori (Read-access for all, Write-access for admin)
+
+    Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
+
     // Admin-only routes
     Route::middleware('role:admin')->group(function () {
-
-        // Menu & Kategori
+        // Menu & Kategori Management
         Route::resource('kategori', KategoriController::class)->except(['show']);
-        Route::resource('menu', MenuController::class);
+        Route::resource('menu', MenuController::class)->except(['index']);
 
         // Laporan
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
@@ -58,11 +62,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/laporan/export/excel', [LaporanController::class, 'exportExcel'])->name('laporan.excel');
 
         // Pengguna
-        Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
-        Route::get('/pengguna/create', [PenggunaController::class, 'create'])->name('pengguna.create');
-        Route::post('/pengguna', [PenggunaController::class, 'store'])->name('pengguna.store');
-        Route::get('/pengguna/{pengguna}/edit', [PenggunaController::class, 'edit'])->name('pengguna.edit');
-        Route::put('/pengguna/{pengguna}', [PenggunaController::class, 'update'])->name('pengguna.update');
-        Route::delete('/pengguna/{pengguna}', [PenggunaController::class, 'destroy'])->name('pengguna.destroy');
+        Route::resource('pengguna', PenggunaController::class)->except(['show']);
     });
 });

@@ -14,7 +14,7 @@
                         primary: '#15173D',
                         secondary: '#982598',
                         tertiary: '#E491C9',
-                        background: '#F8F9FA',
+                        background: '#F0F2F8',
                     },
                     fontFamily: {
                         sans: ['Inter', 'ui-sans-serif', 'system-ui']
@@ -109,7 +109,7 @@
     </style>
     @stack('styles')
 </head>
-<body class="bg-background text-gray-800 font-sans antialiased" x-data="{ sidebarOpen: true, mobileOpen: false }">
+<body class="text-gray-800 font-sans antialiased" style="background: linear-gradient(135deg, #eef0f8 0%, #f4f0f8 50%, #eef0f8 100%); min-height: 100vh;" x-data="{ sidebarOpen: true, mobileOpen: false }">
 
     <!-- Mobile Overlay -->
     <div x-show="mobileOpen" x-cloak @click="mobileOpen = false" class="fixed inset-0 bg-primary/50 z-30 lg:hidden transition-opacity"></div>
@@ -153,26 +153,46 @@
                         <div class="absolute right-3 w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_8px_rgba(228,145,201,0.6)]"></div>
                         @endif
                     </a>
+                </div>
+            </div>
 
-                    <a href="{{ route('transaksi.index') }}" 
-                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate {{ request()->routeIs('transaksi.*') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white' }}"
+            <!-- Group: POS -->
+            <div>
+                <p x-show="sidebarOpen" class="px-4 text-[10px] font-black uppercase tracking-[0.15em] text-white/30 mb-3 nav-item-animate" style="animation-delay: 0.25s;">POS & Transaksi</p>
+                <div class="space-y-1">
+                    @if(auth()->user()->isAdmin() || auth()->user()->isKasir())
+                    <a href="{{ route('transaksi.create') }}" 
+                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate {{ request()->routeIs('transaksi.create') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white' }}"
                        style="animation-delay: 0.3s;"
                        :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'">
-                        <span class="material-symbols-outlined !text-[22px] sidebar-transition {{ request()->routeIs('transaksi.*') ? 'text-tertiary' : 'text-white/40 group-hover:text-white' }}">receipt_long</span>
+                        <span class="material-symbols-outlined !text-[22px] sidebar-transition {{ request()->routeIs('transaksi.create') ? 'text-tertiary' : 'text-white/40 group-hover:text-white' }}">shopping_cart</span>
+                        <span x-show="sidebarOpen" class="ml-4 text-sm font-bold tracking-tight">Buat Pesanan</span>
+                        <span x-show="!sidebarOpen" class="sidebar-tooltip">Buat Pesanan</span>
+                        @if(request()->routeIs('transaksi.create'))
+                        <div class="absolute right-3 w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_8px_rgba(228,145,201,0.6)]"></div>
+                        @endif
+                    </a>
+                    @endif
+
+                    <a href="{{ route('transaksi.index') }}" 
+                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate {{ request()->routeIs('transaksi.index', 'transaksi.show') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white' }}"
+                       style="animation-delay: 0.35s;"
+                       :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'">
+                        <span class="material-symbols-outlined !text-[22px] sidebar-transition {{ request()->routeIs('transaksi.index', 'transaksi.show') ? 'text-tertiary' : 'text-white/40 group-hover:text-white' }}">receipt_long</span>
                         <span x-show="sidebarOpen" class="ml-4 text-sm font-bold tracking-tight">Riwayat Transaksi</span>
                         <span x-show="!sidebarOpen" class="sidebar-tooltip">Riwayat Transaksi</span>
-                        @if(request()->routeIs('transaksi.*'))
+                        @if(request()->routeIs('transaksi.index', 'transaksi.show'))
                         <div class="absolute right-3 w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_8px_rgba(228,145,201,0.6)]"></div>
                         @endif
                     </a>
                 </div>
             </div>
 
-            <!-- Group: Management (Admin Only) -->
-            @if(auth()->user()->isAdmin())
+            <!-- Group: Management -->
             <div>
                 <p x-show="sidebarOpen" class="px-4 text-[10px] font-black uppercase tracking-[0.15em] text-white/30 mb-3 nav-item-animate" style="animation-delay: 0.4s;">Manajemen</p>
                 <div class="space-y-1">
+                    @if(auth()->user()->isAdmin())
                     <a href="{{ route('kategori.index') }}" 
                        class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate {{ request()->routeIs('kategori.*') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white' }}"
                        style="animation-delay: 0.5s;"
@@ -184,6 +204,7 @@
                         <div class="absolute right-3 w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_8px_rgba(228,145,201,0.6)]"></div>
                         @endif
                     </a>
+                    @endif
 
                     <a href="{{ route('menu.index') }}" 
                        class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate {{ request()->routeIs('menu.*') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white' }}"
@@ -197,9 +218,18 @@
                         @endif
                     </a>
 
+
+                </div>
+            </div>
+
+            @if(auth()->user()->isAdmin())
+            <!-- Group: Reports -->
+            <div>
+                <p x-show="sidebarOpen" class="px-4 text-[10px] font-black uppercase tracking-[0.15em] text-white/30 mb-3 nav-item-animate" style="animation-delay: 0.75s;">Laporan</p>
+                <div class="space-y-1">
                     <a href="{{ route('laporan.index') }}" 
                        class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate {{ request()->routeIs('laporan.*') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white' }}"
-                       style="animation-delay: 0.7s;"
+                       style="animation-delay: 0.8s;"
                        :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'">
                         <span class="material-symbols-outlined !text-[22px] sidebar-transition {{ request()->routeIs('laporan.*') ? 'text-tertiary' : 'text-white/40 group-hover:text-white' }}">analytics</span>
                         <span x-show="sidebarOpen" class="ml-4 text-sm font-bold tracking-tight">Laporan Sales</span>
@@ -210,7 +240,9 @@
                     </a>
                 </div>
             </div>
+            @endif
 
+            @if(auth()->user()->isAdmin())
             <div>
                 <p x-show="sidebarOpen" class="px-4 text-[10px] font-black uppercase tracking-[0.15em] text-white/30 mb-3 nav-item-animate" style="animation-delay: 0.8s;">Pengaturan</p>
                 <div class="space-y-1">
@@ -284,61 +316,78 @@
     <div :class="sidebarOpen ? 'lg:ml-[280px]' : 'lg:ml-20'" class="transition-all duration-300 min-h-screen flex flex-col pt-16">
         
         <!-- Header -->
-        <header class="fixed top-0 right-0 left-0 bg-white border-b border-gray-200 z-20 h-16 flex items-center justify-between px-4 lg:px-6 transition-all duration-300"
-                :class="sidebarOpen ? 'lg:left-72' : 'lg:left-20'">
+        <header class="fixed top-0 right-0 left-0 z-20 h-16 flex items-center justify-between px-4 lg:px-6 transition-all duration-300"
+                style="background: rgba(255,255,255,0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid rgba(21,23,61,0.08); box-shadow: 0 1px 20px rgba(21,23,61,0.06);"
+                :class="sidebarOpen ? 'lg:left-[280px]' : 'lg:left-20'">
             
             {{-- Left Side Header --}}
-            <div class="flex items-center gap-4">
-                <button @click="mobileOpen = !mobileOpen" class="text-gray-500 hover:text-primary lg:hidden p-1.5 rounded-md hover:bg-gray-100 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            <div class="flex items-center gap-3">
+                <button @click="mobileOpen = !mobileOpen" class="text-gray-400 hover:text-primary lg:hidden p-2 rounded-xl hover:bg-primary/5 transition-all">
+                    <span class="material-symbols-outlined !text-[22px]">menu</span>
                 </button>
-                <button @click="sidebarOpen = !sidebarOpen" class="hidden lg:block text-gray-500 hover:text-primary p-1.5 rounded-md hover:bg-gray-100 transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                <button @click="sidebarOpen = !sidebarOpen" class="hidden lg:flex text-gray-400 hover:text-primary p-2 rounded-xl hover:bg-primary/5 transition-all">
+                    <span class="material-symbols-outlined !text-[22px]">menu</span>
                 </button>
-                <div class="hidden sm:flex items-center text-sm font-medium text-gray-400 gap-2">
-                    <a href="{{ route('dashboard') }}" class="hover:text-primary transition-colors">Workspace</a>
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                    <span class="text-gray-900 font-bold tracking-tight">@yield('page-title', 'Dashboard')</span>
+                <div class="hidden sm:flex items-center gap-2">
+                    <a href="{{ route('dashboard') }}" class="text-xs font-bold text-gray-400 hover:text-primary transition-colors">Dashboard</a>
+                    <span class="material-symbols-outlined !text-[14px] text-gray-300">chevron_right</span>
+                    <span class="text-xs font-black text-primary tracking-tight">@yield('page-title', 'Dashboard')</span>
                 </div>
             </div>
 
             {{-- Right Side Header --}}
-            <div class="flex items-center gap-2 sm:gap-4">
-                <div x-data="{ time: '' }" x-init="setInterval(() => { time = new Date().toLocaleTimeString('id-ID', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit' }) + ' WIB' }, 1000)" class="text-[13px] font-bold text-gray-500 hidden md:flex items-center gap-2 pr-2">
-                    <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    <span x-text="time"></span>
+            <div class="flex items-center gap-2 sm:gap-3">
+                {{-- Live Clock --}}
+                <div x-data="{ time: '' }" x-init="setInterval(() => { time = new Date().toLocaleTimeString('id-ID', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit' }) + ' WIB' }, 1000)"
+                     class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-primary/5 border border-primary/10">
+                    <span class="material-symbols-outlined !text-[16px] text-primary/50">schedule</span>
+                    <span x-text="time" class="text-[12px] font-black text-primary tracking-wide"></span>
                 </div>
-                
-                <div class="w-px h-8 bg-gray-200 hidden sm:block"></div>
 
-                <a href="{{ route('transaksi.create') }}" class="flex items-center gap-2 px-4 py-2 bg-secondary hover:opacity-90 text-white text-sm font-bold rounded-md transition-all shadow-sm shrink-0 border border-[#7A1D7A]">
-                    <svg class="w-4 h-4 shrink-0 shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                    <span class="hidden sm:inline">POS Kasir</span>
-                </a>
+
             </div>
         </header>
 
         <!-- Flash Messages -->
         @if(session('success'))
-        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" x-transition class="m-4 lg:m-6 mb-0 p-4 bg-green-50 border border-green-200 rounded-md flex items-start gap-3 text-green-800 text-sm shadow-sm relative">
-            <svg class="w-5 h-5 text-green-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            <span class="flex-1 font-bold">{{ session('success') }}</span>
-            <button @click="show = false" class="absolute top-4 right-4 text-green-600 hover:text-green-800">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 -translate-y-2"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="mx-4 lg:mx-6 mt-4 mb-0 p-4 bg-green-50 border border-green-200 rounded-2xl flex items-start gap-3 text-green-800 text-sm shadow-sm relative">
+            <div class="w-8 h-8 rounded-xl bg-green-100 flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined !text-[18px] text-green-600">check_circle</span>
+            </div>
+            <div class="flex-1">
+                <p class="font-black text-green-800">Berhasil!</p>
+                <p class="text-xs text-green-600 font-medium mt-0.5">{{ session('success') }}</p>
+            </div>
+            <button @click="show = false" class="text-green-400 hover:text-green-600 transition-colors">
+                <span class="material-symbols-outlined !text-[18px]">close</span>
             </button>
         </div>
         @endif
         
         @if($errors->any())
-        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" x-transition class="m-4 lg:m-6 mb-0 p-4 bg-red-50 border border-red-200 rounded-md flex items-start gap-3 text-red-800 text-sm shadow-sm relative">
-            <svg class="w-5 h-5 text-red-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-            <div class="flex-1 font-bold pr-4">
-                <ul class="list-disc list-inside">
+        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 7000)"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 -translate-y-2"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             class="mx-4 lg:mx-6 mt-4 mb-0 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-start gap-3 text-red-800 text-sm shadow-sm relative">
+            <div class="w-8 h-8 rounded-xl bg-red-100 flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined !text-[18px] text-red-600">error</span>
+            </div>
+            <div class="flex-1 pr-4">
+                <p class="font-black text-red-800 mb-1">Ada Kesalahan</p>
+                <ul class="text-xs text-red-600 font-medium list-disc list-inside space-y-0.5">
                     @foreach($errors->all() as $error) <li>{{ $error }}</li> @endforeach
                 </ul>
             </div>
-            <button @click="show = false" class="absolute top-4 right-4 text-red-600 hover:text-red-800">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            <button @click="show = false" class="text-red-400 hover:text-red-600 transition-colors">
+                <span class="material-symbols-outlined !text-[18px]">close</span>
             </button>
         </div>
         @endif

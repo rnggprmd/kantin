@@ -1,44 +1,42 @@
 @extends('layouts.app')
-@section('title', 'Perbarui Kategori')
-@section('page-title', 'Perbarui Kategori')
+@section('title', 'Edit Kategori')
+@section('page-title', 'Modifikasi Kategori')
 
 @section('content')
-<div class="max-w-2xl mt-4 max-w-full">
-    <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-        <div class="mb-6 border-b border-gray-200 pb-4 flex justify-between items-center">
-            <div>
-                <h3 class="text-xl font-bold text-gray-900">Perbarui Data Kategori</h3>
-                <p class="text-sm text-gray-500 mt-1">Ubah nama atau deskripsi dari kelompok kategori ini.</p>
+<div class="max-w-2xl mx-auto">
+    {{-- Header --}}
+    <div class="flex items-center gap-4 mb-8">
+        <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style="background: linear-gradient(135deg, #1e3a5f, #15173D);">
+            <span class="material-symbols-outlined text-blue-300 !text-[24px]">edit</span>
+        </div>
+        <div>
+            <h2 class="text-2xl font-black text-gray-900 tracking-tight">Edit Kategori</h2>
+            <p class="text-xs text-gray-400 font-medium mt-1">Ubah informasi kategori: <span class="text-primary font-bold">{{ $kategori->nama }}</span></p>
+        </div>
+    </div>
+
+    <form method="POST" action="{{ route('kategori.update', $kategori->id) }}" class="space-y-6">
+        @csrf @method('PUT')
+        <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 space-y-6">
+            <div class="relative group">
+                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Nama Kategori</label>
+                <input type="text" name="nama" value="{{ old('nama', $kategori->nama) }}" required
+                       class="w-full bg-gray-50 border border-transparent text-gray-900 rounded-2xl px-5 py-3.5 text-sm font-bold focus:outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all">
             </div>
-            <a href="{{ route('kategori.index') }}" class="text-sm px-4 py-2 hover:bg-gray-100 rounded-md font-bold text-gray-600 transition-colors">Batal</a>
+
+            <div class="relative group">
+                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Deskripsi (Opsional)</label>
+                <textarea name="deskripsi" rows="4"
+                          class="w-full bg-gray-50 border border-transparent text-gray-900 rounded-2xl px-5 py-3.5 text-sm font-bold focus:outline-none focus:bg-white focus:border-primary transition-all resize-none">{{ old('deskripsi', $kategori->deskripsi) }}</textarea>
+            </div>
         </div>
 
-        <form method="POST" action="{{ route('kategori.update', $kategori->id) }}" class="space-y-6">
-            @csrf
-            @method('PUT')
-            
-            <div class="space-y-1.5">
-                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Nama Kategori <span class="text-red-500">*</span></label>
-                <input type="text" name="nama" value="{{ old('nama', $kategori->nama) }}" required autofocus
-                       class="w-full bg-gray-50/50 border border-gray-300 text-gray-900 placeholder-gray-400 rounded-lg px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:bg-white transition-colors"
-                       placeholder="Contoh: Paket Hemat, Minuman Dingin...">
-                @error('nama') <p class="text-xs text-red-600 font-medium mt-1">{{ $message }}</p> @enderror
-            </div>
-
-            <div class="space-y-1.5">
-                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Deskripsi Singkat <span class="text-gray-400 font-normal normal-case">(Opsional)</span></label>
-                <textarea name="deskripsi" rows="3"
-                          class="w-full bg-gray-50/50 border border-gray-300 text-gray-900 placeholder-gray-400 rounded-lg px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:bg-white transition-colors resize-none"
-                          placeholder="Ketikan penjelasan terkait kelompok kategori ini...">{{ old('deskripsi', $kategori->deskripsi) }}</textarea>
-                @error('deskripsi') <p class="text-xs text-red-600 font-medium mt-1">{{ $message }}</p> @enderror
-            </div>
-
-            <div class="pt-4 border-t border-gray-100 flex justify-end">
-                <button type="submit" class="px-6 py-2.5 bg-primary hover:bg-[#0c0d24] text-white text-sm font-bold tracking-wider uppercase rounded-lg shadow-sm transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-primary inline-flex items-center gap-2">
-                    Simpan Perubahan
-                </button>
-            </div>
-        </form>
-    </div>
+        <div class="flex items-center justify-end gap-4 pt-2">
+            <a href="{{ route('kategori.index') }}" class="text-xs font-black text-gray-400 hover:text-gray-600 uppercase tracking-widest transition-colors">Batal</a>
+            <button type="submit" class="px-10 py-4 bg-primary text-white text-xs font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-primary/20 hover:shadow-primary/30 transition-all">
+                Simpan Perubahan
+            </button>
+        </div>
+    </form>
 </div>
 @endsection

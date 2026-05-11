@@ -3,118 +3,125 @@
 @section('page-title', 'Riwayat Transaksi')
 
 @section('content')
-<div class="h-full flex flex-col space-y-4">
+<div class="space-y-5">
 
-    {{-- Top Action Bar (Professional Card Style) --}}
-    <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mb-2">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 border-b border-gray-200">
-            <div>
-                <h2 class="text-xl font-bold text-gray-900 tracking-tight">Riwayat Transaksi</h2>
-                <p class="text-xs text-gray-500 font-medium">Pantau rekam jejak pesanan dan pemasukan kantin secara real-time.</p>
+    {{-- Page Header --}}
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 border-b border-gray-100">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+                     style="background: linear-gradient(135deg, #15173D, #2d1b69);">
+                    <span class="material-symbols-outlined text-white !text-[22px]">receipt_long</span>
+                </div>
+                <div>
+                    <h2 class="text-lg font-black text-gray-900 tracking-tight">Riwayat Transaksi</h2>
+                    <p class="text-xs text-gray-400 font-medium mt-0.5">Rekam jejak pesanan dan pemasukan kantin secara real-time.</p>
+                </div>
             </div>
-            <a href="{{ route('transaksi.create') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary hover:bg-[#0c0d24] text-white text-sm font-semibold rounded-md shadow-sm transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                POS Kasir Baru
-            </a>
+
         </div>
         
-        {{-- Integrated Filter Bar with Auto-Submit --}}
-        <div class="px-4 py-3 bg-gray-50/50">
+        {{-- Filter Bar --}}
+        <div class="px-5 py-3.5 bg-gray-50/50">
             <form method="GET" x-data x-ref="transaksiForm" class="flex flex-col sm:flex-row items-center gap-3">
-                {{-- Search Input --}}
                 <div class="flex-1 relative w-full">
-                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    <input type="text" name="search" value="{{ request('search') }}" 
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 !text-[18px] text-gray-400">search</span>
+                    <input type="text" name="search" value="{{ request('search') }}"
                            @input.debounce.500ms="$refs.transaksiForm.submit()"
                            placeholder="Cari kode nota atau nama pelanggan..."
-                           class="w-full bg-white border border-gray-300 text-gray-900 placeholder-gray-400 rounded-md pl-9 pr-3 py-1.5 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors">
+                           class="w-full bg-white border border-gray-200 text-gray-900 placeholder-gray-400 rounded-xl pl-10 pr-3 py-2 text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all">
                 </div>
-
-                {{-- Status Filter --}}
-                <div class="w-full sm:w-56">
-                    <select name="status" class="w-full bg-white border border-gray-300 text-gray-700 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" onchange="this.form.submit()">
-                        <option value="">Semua Status Data</option>
+                <div class="w-full sm:w-52">
+                    <select name="status" class="w-full bg-white border border-gray-200 text-gray-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all" onchange="this.form.submit()">
+                        <option value="">Semua Status</option>
                         <option value="selesai" {{ request('status') === 'selesai' ? 'selected' : '' }}>Tuntas (Lunas)</option>
                         <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Tertunda (Verifikasi)</option>
                         <option value="batal" {{ request('status') === 'batal' ? 'selected' : '' }}>Dibatalkan</option>
                     </select>
                 </div>
-
-                {{-- Reset Button --}}
                 @if(request('search') || request('status'))
-                <a href="{{ route('transaksi.index') }}" class="w-full sm:w-auto px-4 py-1.5 bg-gray-100 text-gray-600 text-xs font-bold rounded-md hover:bg-gray-200 transition-colors border border-gray-200 text-center shadow-sm">
-                    Hapus Filter
+                <a href="{{ route('transaksi.index') }}"
+                   class="w-full sm:w-auto px-4 py-2 bg-gray-100 text-gray-600 text-xs font-black rounded-xl hover:bg-gray-200 transition-colors border border-gray-200 text-center flex items-center gap-1.5 justify-center">
+                    <span class="material-symbols-outlined !text-[16px]">filter_alt_off</span> Hapus Filter
                 </a>
                 @endif
             </form>
         </div>
     </div>
 
-    {{-- Table Container --}}
-    <div class="bg-white border border-gray-200 rounded-lg flex-1 overflow-hidden shadow-sm">
+    {{-- Table --}}
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto w-full">
             <table class="w-full text-sm text-left">
-                <thead class="bg-gray-50/80 border-b border-gray-200 text-[11px] font-bold text-gray-500 uppercase tracking-wider">
-                    <tr>
-                        <th class="px-5 py-4 w-12 text-center">No</th>
-                        <th class="px-5 py-4">Data Nota</th>
-                        <th class="px-5 py-4">Waktu Terbit</th>
-                        <th class="px-5 py-4 text-center">Jalur Bayar</th>
-                        <th class="px-5 py-4 text-right">Nilai Total</th>
-                        <th class="px-5 py-4 text-center">Status Akhir</th>
-                        <th class="px-5 py-4 text-right w-32">Aksi</th>
+                <thead>
+                    <tr style="background: linear-gradient(90deg, #f8f5ff, #f0f2f8);">
+                        <th class="px-5 py-3.5 text-[10px] text-gray-400 font-black uppercase tracking-widest text-center w-12">No</th>
+                        <th class="px-5 py-3.5 text-[10px] text-gray-400 font-black uppercase tracking-widest">Data Nota</th>
+                        <th class="px-5 py-3.5 text-[10px] text-gray-400 font-black uppercase tracking-widest">Waktu</th>
+                        <th class="px-5 py-3.5 text-[10px] text-gray-400 font-black uppercase tracking-widest text-center">Metode Bayar</th>
+                        <th class="px-5 py-3.5 text-[10px] text-gray-400 font-black uppercase tracking-widest text-right">Total</th>
+                        <th class="px-5 py-3.5 text-[10px] text-gray-400 font-black uppercase tracking-widest text-center">Status</th>
+                        <th class="px-5 py-3.5 text-[10px] text-gray-400 font-black uppercase tracking-widest text-right w-28">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100 font-medium">
+                <tbody class="divide-y divide-gray-50">
                     @forelse($transaksis as $t)
-                    <tr class="hover:bg-gray-50/50 transition-colors text-gray-800">
-                        <td class="px-5 py-3.5 text-center text-gray-500 font-semibold">
+                    <tr class="hover:bg-violet-50/30 transition-colors group">
+                        <td class="px-5 py-3.5 text-center text-xs text-gray-400 font-bold">
                             {{ ($transaksis->currentPage() - 1) * $transaksis->perPage() + $loop->iteration }}
                         </td>
                         <td class="px-5 py-3.5">
-                            <p class="font-mono text-[13px] font-bold text-gray-900 tracking-tight">{{ $t->kode_transaksi }}</p>
+                            <code class="text-[12px] font-black text-primary bg-primary/5 px-2 py-0.5 rounded-lg">{{ $t->kode_transaksi }}</code>
                             @if($t->pelanggan_nama)
-                            <p class="text-[11px] text-gray-500 mt-0.5 line-clamp-1 max-w-[150px] font-normal" title="{{ $t->pelanggan_nama }}">A/N: {{ $t->pelanggan_nama }}</p>
+                            <p class="text-[11px] text-gray-400 mt-1 font-medium">A/N: {{ $t->pelanggan_nama }}</p>
                             @endif
                         </td>
                         <td class="px-5 py-3.5">
-                            <p class="text-[13px] font-bold text-gray-900">{{ $t->created_at->format('d M Y') }}</p>
-                            <p class="text-[11px] text-gray-400 font-normal">Pukul {{ $t->created_at->format('H:i') }} WIB</p>
+                            <p class="text-sm font-bold text-gray-800">{{ $t->created_at->format('d M Y') }}</p>
+                            <p class="text-[11px] text-gray-400 font-medium mt-0.5">{{ $t->created_at->format('H:i') }} WIB</p>
                         </td>
                         <td class="px-5 py-3.5 text-center">
-                            <span class="text-[10px] font-bold uppercase text-gray-600 tracking-wide">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide
+                                {{ $t->metode_bayar === 'tunai' ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-blue-50 text-blue-700 border border-blue-100' }}">
+                                <span class="material-symbols-outlined !text-[13px]">{{ $t->metode_bayar === 'tunai' ? 'payments' : 'credit_card' }}</span>
                                 {{ str_replace('_', ' ', $t->metode_bayar) }}
                             </span>
                         </td>
                         <td class="px-5 py-3.5 text-right">
-                            <p class="text-[14px] font-black tracking-tight text-gray-900">Rp {{ number_format($t->total_harga, 0, ',', '.') }}</p>
+                            <p class="text-sm font-black text-gray-900 tracking-tight">Rp {{ number_format($t->total_harga, 0, ',', '.') }}</p>
                         </td>
                         <td class="px-5 py-3.5 text-center">
                             @if($t->status === 'selesai')
-                                <span class="text-green-600 font-black text-[11px] uppercase tracking-wider">Tuntas</span>
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-green-50 text-green-700 text-[10px] font-black uppercase tracking-wide rounded-full border border-green-100">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 inline-block"></span> Tuntas
+                                </span>
                             @elseif($t->status === 'pending')
-                                <span class="text-yellow-600 font-black text-[11px] uppercase tracking-wider">Tertunda</span>
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-700 text-[10px] font-black uppercase tracking-wide rounded-full border border-amber-100">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block animate-pulse"></span> Tertunda
+                                </span>
                             @else
-                                <span class="text-red-500 font-black text-[11px] uppercase tracking-wider">Batal</span>
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-red-50 text-red-700 text-[10px] font-black uppercase tracking-wide rounded-full border border-red-100">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-red-500 inline-block"></span> Batal
+                                </span>
                             @endif
                         </td>
                         <td class="px-5 py-3.5 text-right">
-                            <div class="flex items-center justify-end gap-2">
+                            <div class="flex items-center justify-end gap-1.5">
                                 <a href="{{ route('transaksi.show', $t->id) }}"
-                                   class="p-1.5 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-md transition-all" title="Lihat Struk">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                   class="p-2 text-gray-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all" title="Lihat Struk">
+                                    <span class="material-symbols-outlined !text-[18px]">visibility</span>
                                 </a>
                                 @if(auth()->user()->isAdmin() && $t->status !== 'batal')
-                                <button type="button" 
-                                        @click="$dispatch('confirm', { 
-                                            title: 'Batalkan Nota?', 
-                                            message: 'Apakah Anda yakin ingin membatalkan transaksi {{ $t->kode_transaksi }}? Stok barang akan otomatis dikembalikan ke gudang.', 
+                                <button type="button"
+                                        @click="$dispatch('confirm', {
+                                            title: 'Batalkan Nota?',
+                                            message: 'Apakah Anda yakin ingin membatalkan transaksi {{ $t->kode_transaksi }}?',
                                             action: '{{ route('transaksi.destroy', $t->id) }}',
                                             method: 'DELETE',
-                                            confirmText: 'Ya, Batalkan Nota'
+                                            confirmText: 'Ya, Batalkan'
                                         })"
-                                        class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-all" title="Batalkan Transaksi">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+                                        class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Batalkan">
+                                    <span class="material-symbols-outlined !text-[18px]">cancel</span>
                                 </button>
                                 @endif
                             </div>
@@ -122,19 +129,20 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="px-5 py-16 text-center text-gray-400">
-                            <svg class="w-10 h-10 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                            <p class="text-sm font-semibold text-gray-500 mb-1">Riwayat Transaksi Kosong</p>
-                            <p class="text-[11px] font-medium text-gray-400">Belum ada nota yang terbit di sistem.</p>
+                        <td colspan="7" class="px-5 py-16 text-center">
+                            <div class="flex flex-col items-center gap-3">
+                                <span class="material-symbols-outlined text-gray-200 !text-[48px]">receipt_long</span>
+                                <p class="font-black text-gray-400">Riwayat Transaksi Kosong</p>
+                                <p class="text-xs text-gray-300">Belum ada nota yang terbit di sistem.</p>
+                            </div>
                         </td>
                     </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-        
         @if($transaksis->hasPages())
-        <div class="px-4 py-3 border-t border-gray-200 bg-white">
+        <div class="px-5 py-3.5 border-t border-gray-100 bg-gray-50/30">
             {{ $transaksis->links() }}
         </div>
         @endif

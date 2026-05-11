@@ -22,11 +22,7 @@ class MenuController extends Controller
         }
 
         if ($request->filled('status')) {
-            if ($request->status === 'rendah') {
-                $query->where('stok', '<=', 5);
-            } else {
-                $query->where('is_tersedia', $request->status === 'tersedia');
-            }
+            $query->where('is_tersedia', $request->status === 'tersedia');
         }
 
         $menus = $query->paginate(12)->withQueryString();
@@ -48,7 +44,6 @@ class MenuController extends Controller
             'nama' => 'required|string|max:255|unique:menus,nama',
             'deskripsi' => 'nullable|string',
             'harga' => 'required|numeric|min:0',
-            'stok' => 'required|integer|min:0',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'is_tersedia' => 'boolean',
         ]);
@@ -78,7 +73,6 @@ class MenuController extends Controller
             'nama' => 'required|string|max:255|unique:menus,nama,' . $menu->id,
             'deskripsi' => 'nullable|string',
             'harga' => 'required|numeric|min:0',
-            'stok' => 'required|integer|min:0',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'is_tersedia' => 'boolean',
         ]);
