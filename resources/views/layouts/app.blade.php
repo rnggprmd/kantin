@@ -33,18 +33,19 @@
 
         /* Custom Scrollbar - Force Visibility */
         .custom-scrollbar::-webkit-scrollbar { 
-            width: 5px !important; 
+            width: 6px !important; 
             display: block !important;
         }
         .custom-scrollbar::-webkit-scrollbar-track { 
-            background: rgba(255, 255, 255, 0.02) !important; 
+            background: rgba(0, 0, 0, 0.05) !important; 
+            border-radius: 10px !important;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb { 
-            background: rgba(228, 145, 201, 0.2) !important; 
+            background: rgba(228, 145, 201, 0.3) !important; 
             border-radius: 10px !important; 
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { 
-            background: rgba(228, 145, 201, 0.4) !important; 
+            background: rgba(228, 145, 201, 0.5) !important; 
         }
 
         /* Advanced Animations */
@@ -160,7 +161,7 @@
             <div>
                 <p x-show="sidebarOpen" class="px-4 text-[10px] font-black uppercase tracking-[0.15em] text-white/30 mb-3 nav-item-animate" style="animation-delay: 0.25s;">POS & Transaksi</p>
                 <div class="space-y-1">
-                    @if(auth()->user()->isAdmin() || auth()->user()->isKasir())
+                    @if(auth()->user()->isAdmin() || auth()->user()->isKantin())
                     <a href="{{ route('transaksi.create') }}" 
                        class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate {{ request()->routeIs('transaksi.create') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white' }}"
                        style="animation-delay: 0.3s;"
@@ -182,6 +183,18 @@
                         <span x-show="sidebarOpen" class="ml-4 text-sm font-bold tracking-tight">Riwayat Transaksi</span>
                         <span x-show="!sidebarOpen" class="sidebar-tooltip">Riwayat Transaksi</span>
                         @if(request()->routeIs('transaksi.index', 'transaksi.show'))
+                        <div class="absolute right-3 w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_8px_rgba(228,145,201,0.6)]"></div>
+                        @endif
+                    </a>
+
+                    <a href="{{ route('kitchen.index') }}" 
+                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate {{ request()->routeIs('kitchen.*') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white' }}"
+                       style="animation-delay: 0.40s;"
+                       :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'">
+                        <span class="material-symbols-outlined !text-[22px] sidebar-transition {{ request()->routeIs('kitchen.*') ? 'text-tertiary' : 'text-white/40 group-hover:text-white' }}">soup_kitchen</span>
+                        <span x-show="sidebarOpen" class="ml-4 text-sm font-bold tracking-tight">Monitor Dapur</span>
+                        <span x-show="!sidebarOpen" class="sidebar-tooltip">Monitor Dapur</span>
+                        @if(request()->routeIs('kitchen.*'))
                         <div class="absolute right-3 w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_8px_rgba(228,145,201,0.6)]"></div>
                         @endif
                     </a>
@@ -217,6 +230,20 @@
                         <div class="absolute right-3 w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_8px_rgba(228,145,201,0.6)]"></div>
                         @endif
                     </a>
+
+                    @if(auth()->user()->isAdmin())
+                    <a href="{{ route('meja.index') }}" 
+                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate {{ request()->routeIs('meja.*') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white' }}"
+                       style="animation-delay: 0.65s;"
+                       :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'">
+                        <span class="material-symbols-outlined !text-[22px] sidebar-transition {{ request()->routeIs('meja.*') ? 'text-tertiary' : 'text-white/40 group-hover:text-white' }}">qr_code_2</span>
+                        <span x-show="sidebarOpen" class="ml-4 text-sm font-bold tracking-tight">Lokasi & Meja</span>
+                        <span x-show="!sidebarOpen" class="sidebar-tooltip">Lokasi & Meja</span>
+                        @if(request()->routeIs('meja.*'))
+                        <div class="absolute right-3 w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_8px_rgba(228,145,201,0.6)]"></div>
+                        @endif
+                    </a>
+                    @endif
 
 
                 </div>
@@ -339,9 +366,9 @@
             <div class="flex items-center gap-2 sm:gap-3">
                 {{-- Live Clock --}}
                 <div x-data="{ time: '' }" x-init="setInterval(() => { time = new Date().toLocaleTimeString('id-ID', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit' }) + ' WIB' }, 1000)"
-                     class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-primary/5 border border-primary/10">
-                    <span class="material-symbols-outlined !text-[16px] text-primary/50">schedule</span>
-                    <span x-text="time" class="text-[12px] font-black text-primary tracking-wide"></span>
+                     class="flex items-center gap-1.5 sm:gap-2">
+                    <span class="material-symbols-outlined !text-[16px] text-primary/40">schedule</span>
+                    <span x-text="time" class="text-[11px] sm:text-[12px] font-black text-primary tracking-wide whitespace-nowrap"></span>
                 </div>
 
 

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Transaksi Baru — POS')
-@section('page-title', 'Kasir — Menu Pemesanan')
+@section('page-title', 'Kantin — Menu Pemesanan')
 
 @section('content')
 <div x-data="pos()" class="h-[calc(100vh-6rem)] lg:h-[calc(100vh-7rem)] min-h-[500px]">
@@ -45,7 +45,7 @@
 
                 {{-- Menu Grid --}}
                 <div class="flex-1 overflow-y-auto px-5 py-5 custom-scrollbar">
-                    <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-5">
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                         @foreach($menus as $kategoriNama => $items)
                         @foreach($items as $menu)
                         <div x-show="(activeKategori === '' || activeKategori === '{{ $kategoriNama }}') &&
@@ -60,9 +60,8 @@
                                 <img src="{{ asset('storage/' . $menu->gambar) }}" alt="{{ $menu->nama }}"
                                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                                 @else
-                                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
-                                    <span class="material-symbols-outlined text-gray-200 !text-[40px]">restaurant</span>
-                                </div>
+                                <img src="https://loremflickr.com/400/300/food?lock={{ $menu->id }}" alt="{{ $menu->nama }}"
+                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                                 @endif
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                             </div>

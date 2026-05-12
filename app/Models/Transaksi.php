@@ -9,6 +9,9 @@ class Transaksi extends Model
     protected $fillable = [
         'kode_transaksi',
         'user_id',
+        'meja_id',
+        'nomor_antrean',
+        'status_pesanan',
         'pelanggan_nama',
         'total_harga',
         'metode_bayar',
@@ -32,6 +35,11 @@ class Transaksi extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function meja()
+    {
+        return $this->belongsTo(Meja::class);
     }
 
     public function details()

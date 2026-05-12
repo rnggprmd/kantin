@@ -49,7 +49,7 @@
                     <select name="role" class="w-full bg-white border border-gray-200 text-gray-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary transition-all" onchange="this.form.submit()">
                         <option value="">Semua Role</option>
                         <option value="admin" {{ request('role') === 'admin' ? 'selected' : '' }}>Administrator</option>
-                        <option value="kasir" {{ request('role') === 'kasir' ? 'selected' : '' }}>Kasir</option>
+                        <option value="kasir" {{ request('role') === 'kasir' ? 'selected' : '' }}>Kantin</option>
                     </select>
                 </div>
                 @if(request('search') || request('role'))
@@ -105,7 +105,7 @@
                                 </span>
                             @else
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide bg-gray-50 text-gray-500 border border-gray-100">
-                                    <span class="material-symbols-outlined !text-[13px]">point_of_sale</span> Kasir
+                                    <span class="material-symbols-outlined !text-[13px]">point_of_sale</span> Kantin
                                 </span>
                             @endif
                         </td>
@@ -195,7 +195,7 @@
                                 <div>
                                     <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1.5">Otoritas / Role</label>
                                     <select name="role" required class="w-full bg-gray-50 border @error('role') border-red-500 @else border-gray-200 @enderror text-gray-900 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-all">
-                                        <option value="kasir" {{ old('role') === 'kasir' ? 'selected' : '' }}>Kasir (Operator POS)</option>
+                                        <option value="kasir" {{ old('role') === 'kasir' ? 'selected' : '' }}>Kantin (Operator POS)</option>
                                         <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Administrator (Manajer)</option>
                                     </select>
                                 </div>

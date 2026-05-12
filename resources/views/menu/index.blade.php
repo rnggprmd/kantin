@@ -72,7 +72,7 @@
     </div>
 
     {{-- Menu Grid --}}
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 xl:gap-6">
         @forelse($menus as $menu)
         <div class="bg-white border border-gray-100 hover:border-secondary/30 rounded-2xl flex flex-col overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group relative">
             
@@ -86,9 +86,7 @@
                 @if($menu->gambar)
                 <img src="{{ asset('storage/' . $menu->gambar) }}" alt="{{ $menu->nama }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                 @else
-                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
-                    <span class="material-symbols-outlined text-gray-300 !text-[40px]">restaurant</span>
-                </div>
+                <img src="https://loremflickr.com/300/300/food?lock={{ $menu->id }}" alt="{{ $menu->nama }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                 @endif
                 <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
             </div>

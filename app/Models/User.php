@@ -40,7 +40,7 @@ class User extends Authenticatable
         return $this->role === 'admin';
     }
 
-    public function isKasir(): bool
+    public function isKantin(): bool
     {
         return $this->role === 'kasir';
     }

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Dashboard')
-@section('page-title', 'Overview Kinerja')
+@section('page-title', 'Kantin — Menu Pemesanan')
 
 @push('styles')
 <style>
@@ -103,7 +103,7 @@
                     @if(auth()->user()->isAdmin())
                         Panel Admin — Pantau kinerja operasional kantin Anda hari ini.
                     @else
-                        Panel Kasir — Siap melayani transaksi hari ini.
+                        Panel Kantin — Siap melayani transaksi hari ini.
                     @endif
                 </p>
             </div>
@@ -244,29 +244,25 @@
             </div>
         </div>
 
-        {{-- Kasir Teraktif --}}
+        {{-- Kantin Teraktif --}}
         <div class="anim-panel bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <div class="flex items-center justify-between mb-6">
-                <div>
-                    <h3 class="font-black text-gray-900 text-sm tracking-tight">Personel Teraktif</h3>
-                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">Hari Ini</p>
-                </div>
-                <span class="material-symbols-outlined text-primary/20">badge</span>
+                <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest">Kantin Teraktif</h3>
+                <span class="material-symbols-outlined text-gray-300 !text-[18px]">engineering</span>
             </div>
-            <div class="space-y-3">
-                @forelse($kasirTeraktif as $kasir)
+            <div class="space-y-4">
+                @forelse($kantinTeraktif as $kantin)
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-full bg-primary/5 flex items-center justify-center text-primary font-black text-xs border border-primary/10">
-                        {{ substr($kasir->name, 0, 1) }}
+                    <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-[10px] font-black border border-indigo-100">
+                        {{ substr($kantin->name, 0, 1) }}
                     </div>
                     <div class="flex-1">
-                        <p class="text-xs font-black text-gray-800">{{ $kasir->name }}</p>
-                        <p class="text-[10px] text-gray-400 font-bold uppercase">{{ $kasir->total_transaksi }} Transaksi</p>
+                        <p class="text-xs font-black text-gray-800">{{ $kantin->name }}</p>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase">{{ $kantin->total_transaksi }} Transaksi</p>
                     </div>
-                    <div class="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></div>
                 </div>
                 @empty
-                <p class="text-center text-xs text-gray-400 py-4">Belum ada aktivitas</p>
+                <p class="text-[10px] text-gray-400 text-center py-2 italic">Belum ada aktivitas</p>
                 @endforelse
             </div>
         </div>
@@ -287,13 +283,13 @@
                     Lihat Semua
                 </a>
             </div>
-            <div class="overflow-x-auto flex-1">
+            <div class="overflow-auto flex-1 custom-scrollbar" style="max-height: 300px;">
                 <table class="w-full text-sm text-left">
                     <thead>
                         <tr class="border-b border-gray-100">
                             <th class="px-6 py-3 text-[10px] text-gray-400 font-black uppercase tracking-widest">Waktu</th>
                             <th class="px-6 py-3 text-[10px] text-gray-400 font-black uppercase tracking-widest">Kode</th>
-                            <th class="px-6 py-3 text-[10px] text-gray-400 font-black uppercase tracking-widest">Kasir</th>
+                            <th class="px-6 py-3 text-[10px] text-gray-400 font-black uppercase tracking-widest">Kantin</th>
                             <th class="px-6 py-3 text-[10px] text-gray-400 font-black uppercase tracking-widest text-right">Total</th>
                         </tr>
                     </thead>
@@ -397,8 +393,8 @@
         
         // Gradient for the chart
         const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-        gradient.addColorStop(0, 'rgba(21, 23, 61, 0.15)');
-        gradient.addColorStop(1, 'rgba(21, 23, 61, 0)');
+        gradient.addColorStop(0, 'rgba(192, 38, 211, 0.15)');
+        gradient.addColorStop(1, 'rgba(192, 38, 211, 0)');
 
         const rawData = @json($grafikData);
         
@@ -424,10 +420,10 @@
                 datasets: [{
                     label: 'Total Penjualan',
                     data: values,
-                    borderColor: '#15173D',
+                    borderColor: '#c026d3',
                     borderWidth: 4,
                     pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: '#15173D',
+                    pointBorderColor: '#c026d3',
                     pointBorderWidth: 2,
                     pointRadius: 6,
                     pointHoverRadius: 8,
@@ -442,7 +438,7 @@
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        backgroundColor: '#15173D',
+                        backgroundColor: '#c026d3',
                         titleFont: { size: 12, weight: 'bold' },
                         bodyFont: { size: 13, weight: 'bold' },
                         padding: 12,

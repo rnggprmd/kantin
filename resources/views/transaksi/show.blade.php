@@ -146,7 +146,7 @@
                         </div>
                     </div>
                     <div>
-                        <h4 class="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Otorisasi Kasir</h4>
+                        <h4 class="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Otorisasi Kantin</h4>
                         <div class="space-y-2">
                             <p class="text-xs text-white/70 font-black tracking-tight">{{ $transaksi->user?->name ?? 'Sistem' }}</p>
                             <p class="text-[10px] text-white/40 font-bold uppercase tracking-widest">{{ $transaksi->created_at->format('H:i:s') }} WIB</p>

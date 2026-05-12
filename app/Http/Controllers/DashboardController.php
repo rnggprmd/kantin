@@ -76,8 +76,8 @@ class DashboardController extends Controller
             ->orderByDesc('total_pendapatan')
             ->get();
 
-        // Kasir Teraktif (Hari Ini)
-        $kasirTeraktif = DB::table('transaksis')
+        // Kantin Teraktif (Hari Ini)
+        $kantinTeraktif = DB::table('transaksis')
             ->join('users', 'transaksis.user_id', '=', 'users.id')
             ->whereDate('transaksis.created_at', $today)
             ->where('transaksis.status', 'selesai')
@@ -97,7 +97,7 @@ class DashboardController extends Controller
             'menuTerlaris',
             'distribusiBayar',
             'performaKategori',
-            'kasirTeraktif'
+            'kantinTeraktif'
         ));
     }
 }
