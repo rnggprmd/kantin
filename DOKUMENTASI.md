@@ -746,6 +746,15 @@ composer require midtrans/midtrans-php
 php artisan migrate:fresh --seed
 ```
 
+### Error: "Failed to open the referenced table 'mejas'"
+**Penyebab:** Urutan migration bermasalah (foreign key dibuat sebelum tabel reference-nya)
+
+**Solusi:** Sudah diperbaiki di versi terbaru. Jika masih error:
+```bash
+# Reset database
+php artisan migrate:fresh --seed
+```
+
 ### Error: "npm ERR! code ENOENT"
 **Solusi:**
 ```bash
