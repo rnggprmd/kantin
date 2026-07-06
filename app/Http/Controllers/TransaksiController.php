@@ -7,9 +7,9 @@ use App\Models\Menu;
 use App\Models\Transaksi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Midtrans\Config;
 use Midtrans\Snap;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class TransaksiController extends Controller
 {
@@ -65,7 +65,6 @@ class TransaksiController extends Controller
 
             foreach ($request->items as $item) {
                 $menu = Menu::findOrFail($item['menu_id']);
-
                 $subtotal = $menu->harga * $item['qty'];
                 $total += $subtotal;
 
@@ -90,7 +89,6 @@ class TransaksiController extends Controller
             $transaksi = Transaksi::create([
                 'kode_transaksi' => Transaksi::generateKode(),
                 'user_id' => auth()->id(),
-                'pelanggan_nama' => $request->pelanggan_nama,
                 'total_harga' => $total,
                 'metode_bayar' => $request->metode_bayar,
                 'uang_bayar' => $uangBayar,
@@ -110,7 +108,7 @@ class TransaksiController extends Controller
                 ]);
             }
 
-            // Handle Non-Tunai (Midtrans)
+            // Handle Non Tunai - Midtrans
             if ($request->metode_bayar === 'non_tunai') {
                 Config::$serverKey = config('services.midtrans.server_key');
                 Config::$isProduction = (bool) config('services.midtrans.is_production');
@@ -123,7 +121,8 @@ class TransaksiController extends Controller
                         'gross_amount' => (int) $transaksi->total_harga,
                     ],
                     'customer_details' => [
-                        'first_name' => $request->pelanggan_nama ?: 'Pelanggan',
+                        'first_name' => auth()->user()->name,
+                        'email' => auth()->user()->email,
                     ],
                     'item_details' => collect($itemsData)->map(function($item) {
                         return [
@@ -133,26 +132,24 @@ class TransaksiController extends Controller
                             'name' => $item['menu']->nama,
                         ];
                     })->toArray(),
-                    'callbacks' => [
-                        'finish' => route('transaksi.show', $transaksi->id),
-                    ],
                 ];
 
                 try {
                     $snapToken = Snap::getSnapToken($params);
                     $transaksi->update(['snap_token' => $snapToken]);
+                    
+                    DB::commit();
+                    
+                    return redirect()->route('transaksi.show', $transaksi->id)
+                        ->with('success', 'Transaksi berhasil. Silakan lakukan pembayaran.')
+                        ->with('show_payment', true);
                 } catch (\Exception $e) {
-                    throw new \Exception('Koneksi Midtrans Gagal: ' . $e->getMessage());
+                    DB::rollBack();
+                    return back()->withErrors(['error' => 'Gagal koneksi ke payment gateway: ' . $e->getMessage()])->withInput();
                 }
             }
 
             DB::commit();
-
-            if ($request->metode_bayar === 'non_tunai') {
-                return redirect()->route('transaksi.show', $transaksi->id)
-                    ->with('success', 'Transaksi berhasil disimpan. Silahkan lakukan pembayaran.')
-                    ->with('snap_token', $snapToken);
-            }
 
             return redirect()->route('transaksi.show', $transaksi->id)
                 ->with('success', 'Transaksi berhasil disimpan!');
@@ -168,27 +165,20 @@ class TransaksiController extends Controller
         return view('transaksi.show', compact('transaksi'));
     }
 
-    public function destroy(Transaksi $transaksi)
-    {
-        // Batalkan transaksi
-
-        $transaksi->update(['status' => 'batal']);
-
-        return back()->with('success', 'Transaksi berhasil dibatalkan.');
-    }
     public function markAsSuccess(Transaksi $transaksi)
     {
-        // Security check: Only the owner (cashier) can mark as success
-        if ($transaksi->user_id !== auth()->id()) {
-            return response()->json(['status' => 'error', 'message' => 'Unauthorized'], 403);
-        }
-
-        // Only update if currently pending
         if ($transaksi->status === 'pending') {
             $transaksi->update(['status' => 'selesai']);
         }
-
         return response()->json(['status' => 'success']);
+    }
+
+    public function destroy(Transaksi $transaksi)
+    {
+        // Batalkan transaksi
+        $transaksi->update(['status' => 'batal']);
+
+        return back()->with('success', 'Transaksi berhasil dibatalkan.');
     }
 
     public function exportPdf(Transaksi $transaksi)

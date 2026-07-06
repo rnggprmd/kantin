@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\InventarisController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PenggunaController;
@@ -22,11 +21,6 @@ Route::get('/', fn() => redirect()->route('dashboard'));
 // Midtrans Callback (Public)
 Route::post('/midtrans/callback', [\App\Http\Controllers\MidtransController::class, 'callback'])->name('midtrans.callback');
 
-// Pemesanan Siswa via QR (Public — no login required)
-Route::get('/order/status/{kode}', [\App\Http\Controllers\OrderController::class, 'status'])->name('order.status');
-Route::get('/order/{kode}', [\App\Http\Controllers\OrderController::class, 'show'])->name('order.show');
-Route::post('/order/{kode}', [\App\Http\Controllers\OrderController::class, 'store'])->name('order.store');
-
 // Authenticated routes — Kasir & Admin
 Route::middleware('auth')->group(function () {
 
@@ -45,18 +39,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/transaksi/{transaksi}/pdf', [TransaksiController::class, 'exportPdf'])->name('transaksi.pdf');
     Route::post('/transaksi/{transaksi}/success', [TransaksiController::class, 'markAsSuccess'])->name('transaksi.mark-as-success');
 
-    // Kitchen Display System (Staf Kantin)
-    Route::get('/kitchen', [\App\Http\Controllers\OrderController::class, 'kitchen'])->name('kitchen.index');
-    Route::post('/kitchen/{transaksi}/status', [\App\Http\Controllers\OrderController::class, 'updateStatus'])->name('kitchen.update-status');
-
-
     // Admin-only: Batalkan transaksi
     Route::delete('/transaksi/{transaksi}', [TransaksiController::class, 'destroy'])
         ->name('transaksi.destroy')
         ->middleware('role:admin');
 
     // Menu & Kategori (Read-access for all, Write-access for admin)
-
     Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
 
     // Admin-only routes
@@ -69,9 +57,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
         Route::get('/laporan/export/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.pdf');
         Route::get('/laporan/export/excel', [LaporanController::class, 'exportExcel'])->name('laporan.excel');
-
-        // Meja / Lokasi
-        Route::resource('meja', \App\Http\Controllers\MejaController::class)->except(['show', 'create', 'edit']);
 
         // Pengguna
         Route::resource('pengguna', PenggunaController::class)->except(['show']);

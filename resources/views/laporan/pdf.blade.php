@@ -102,7 +102,6 @@
                 <td style="font-family: monospace; font-size: 9px; font-weight: bold;">{{ $t->kode_transaksi }}</td>
                 <td>{{ $t->created_at->format('d/m/Y H:i') }}</td>
                 <td>{{ $t->user?->name ?? '-' }}</td>
-                <td>{{ $t->pelanggan_nama ?? '-' }}</td>
                 <td style="text-transform: uppercase; font-size: 9px; font-weight: bold;">{{ $t->metode_bayar }}</td>
                 <td style="font-weight: 900; color: #15173D; text-align: right;">Rp {{ number_format($t->total_harga, 0, ',', '.') }}</td>
             </tr>

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Dashboard') — Kantin Maria</title>
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <title><?php echo $__env->yieldContent('title', 'Dashboard'); ?> — Kantin Maria</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -108,7 +108,7 @@
             visibility: visible;
         }
     </style>
-    @stack('styles')
+    <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
 <body class="text-gray-800 font-sans antialiased" style="background: linear-gradient(135deg, #eef0f8 0%, #f4f0f8 50%, #eef0f8 100%); min-height: 100vh;" x-data="{ sidebarOpen: true, mobileOpen: false }">
 
@@ -143,16 +143,16 @@
             <div>
                 <p x-show="sidebarOpen" class="px-4 text-[10px] font-black uppercase tracking-[0.15em] text-white/30 mb-3 nav-item-animate" style="animation-delay: 0.1s;">Utama</p>
                 <div class="space-y-1">
-                    <a href="{{ route('dashboard') }}" 
-                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate {{ request()->routeIs('dashboard') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white' }}"
+                    <a href="<?php echo e(route('dashboard')); ?>" 
+                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate <?php echo e(request()->routeIs('dashboard') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white'); ?>"
                        style="animation-delay: 0.2s;"
                        :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'">
-                        <span class="material-symbols-outlined !text-[22px] sidebar-transition {{ request()->routeIs('dashboard') ? 'text-tertiary' : 'text-white/40 group-hover:text-white' }}">dashboard</span>
+                        <span class="material-symbols-outlined !text-[22px] sidebar-transition <?php echo e(request()->routeIs('dashboard') ? 'text-tertiary' : 'text-white/40 group-hover:text-white'); ?>">dashboard</span>
                         <span x-show="sidebarOpen" class="ml-4 text-sm font-bold tracking-tight">Dashboard</span>
                         <span x-show="!sidebarOpen" class="sidebar-tooltip">Dashboard</span>
-                        @if(request()->routeIs('dashboard'))
+                        <?php if(request()->routeIs('dashboard')): ?>
                         <div class="absolute right-3 w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_8px_rgba(228,145,201,0.6)]"></div>
-                        @endif
+                        <?php endif; ?>
                     </a>
                 </div>
             </div>
@@ -161,30 +161,30 @@
             <div>
                 <p x-show="sidebarOpen" class="px-4 text-[10px] font-black uppercase tracking-[0.15em] text-white/30 mb-3 nav-item-animate" style="animation-delay: 0.25s;">POS & Transaksi</p>
                 <div class="space-y-1">
-                    @if(auth()->user()->isAdmin() || auth()->user()->isKantin())
-                    <a href="{{ route('transaksi.create') }}" 
-                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate {{ request()->routeIs('transaksi.create') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white' }}"
+                    <?php if(auth()->user()->isAdmin() || auth()->user()->isKantin()): ?>
+                    <a href="<?php echo e(route('transaksi.create')); ?>" 
+                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate <?php echo e(request()->routeIs('transaksi.create') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white'); ?>"
                        style="animation-delay: 0.3s;"
                        :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'">
-                        <span class="material-symbols-outlined !text-[22px] sidebar-transition {{ request()->routeIs('transaksi.create') ? 'text-tertiary' : 'text-white/40 group-hover:text-white' }}">shopping_cart</span>
+                        <span class="material-symbols-outlined !text-[22px] sidebar-transition <?php echo e(request()->routeIs('transaksi.create') ? 'text-tertiary' : 'text-white/40 group-hover:text-white'); ?>">shopping_cart</span>
                         <span x-show="sidebarOpen" class="ml-4 text-sm font-bold tracking-tight">Buat Pesanan</span>
                         <span x-show="!sidebarOpen" class="sidebar-tooltip">Buat Pesanan</span>
-                        @if(request()->routeIs('transaksi.create'))
+                        <?php if(request()->routeIs('transaksi.create')): ?>
                         <div class="absolute right-3 w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_8px_rgba(228,145,201,0.6)]"></div>
-                        @endif
+                        <?php endif; ?>
                     </a>
-                    @endif
+                    <?php endif; ?>
 
-                    <a href="{{ route('transaksi.index') }}" 
-                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate {{ request()->routeIs('transaksi.index', 'transaksi.show') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white' }}"
+                    <a href="<?php echo e(route('transaksi.index')); ?>" 
+                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate <?php echo e(request()->routeIs('transaksi.index', 'transaksi.show') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white'); ?>"
                        style="animation-delay: 0.35s;"
                        :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'">
-                        <span class="material-symbols-outlined !text-[22px] sidebar-transition {{ request()->routeIs('transaksi.index', 'transaksi.show') ? 'text-tertiary' : 'text-white/40 group-hover:text-white' }}">receipt_long</span>
+                        <span class="material-symbols-outlined !text-[22px] sidebar-transition <?php echo e(request()->routeIs('transaksi.index', 'transaksi.show') ? 'text-tertiary' : 'text-white/40 group-hover:text-white'); ?>">receipt_long</span>
                         <span x-show="sidebarOpen" class="ml-4 text-sm font-bold tracking-tight">Riwayat Transaksi</span>
                         <span x-show="!sidebarOpen" class="sidebar-tooltip">Riwayat Transaksi</span>
-                        @if(request()->routeIs('transaksi.index', 'transaksi.show'))
+                        <?php if(request()->routeIs('transaksi.index', 'transaksi.show')): ?>
                         <div class="absolute right-3 w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_8px_rgba(228,145,201,0.6)]"></div>
-                        @endif
+                        <?php endif; ?>
                     </a>
                 </div>
             </div>
@@ -193,73 +193,73 @@
             <div>
                 <p x-show="sidebarOpen" class="px-4 text-[10px] font-black uppercase tracking-[0.15em] text-white/30 mb-3 nav-item-animate" style="animation-delay: 0.4s;">Manajemen</p>
                 <div class="space-y-1">
-                    @if(auth()->user()->isAdmin())
-                    <a href="{{ route('kategori.index') }}" 
-                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate {{ request()->routeIs('kategori.*') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white' }}"
+                    <?php if(auth()->user()->isAdmin()): ?>
+                    <a href="<?php echo e(route('kategori.index')); ?>" 
+                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate <?php echo e(request()->routeIs('kategori.*') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white'); ?>"
                        style="animation-delay: 0.5s;"
                        :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'">
-                        <span class="material-symbols-outlined !text-[22px] sidebar-transition {{ request()->routeIs('kategori.*') ? 'text-tertiary' : 'text-white/40 group-hover:text-white' }}">category</span>
+                        <span class="material-symbols-outlined !text-[22px] sidebar-transition <?php echo e(request()->routeIs('kategori.*') ? 'text-tertiary' : 'text-white/40 group-hover:text-white'); ?>">category</span>
                         <span x-show="sidebarOpen" class="ml-4 text-sm font-bold tracking-tight">Kategori Menu</span>
                         <span x-show="!sidebarOpen" class="sidebar-tooltip">Kategori Menu</span>
-                        @if(request()->routeIs('kategori.*'))
+                        <?php if(request()->routeIs('kategori.*')): ?>
                         <div class="absolute right-3 w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_8px_rgba(228,145,201,0.6)]"></div>
-                        @endif
+                        <?php endif; ?>
                     </a>
-                    @endif
+                    <?php endif; ?>
 
-                    <a href="{{ route('menu.index') }}" 
-                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate {{ request()->routeIs('menu.*') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white' }}"
+                    <a href="<?php echo e(route('menu.index')); ?>" 
+                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate <?php echo e(request()->routeIs('menu.*') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white'); ?>"
                        style="animation-delay: 0.6s;"
                        :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'">
-                        <span class="material-symbols-outlined !text-[22px] sidebar-transition {{ request()->routeIs('menu.*') ? 'text-tertiary' : 'text-white/40 group-hover:text-white' }}">restaurant_menu</span>
+                        <span class="material-symbols-outlined !text-[22px] sidebar-transition <?php echo e(request()->routeIs('menu.*') ? 'text-tertiary' : 'text-white/40 group-hover:text-white'); ?>">restaurant_menu</span>
                         <span x-show="sidebarOpen" class="ml-4 text-sm font-bold tracking-tight">Katalog Menu</span>
                         <span x-show="!sidebarOpen" class="sidebar-tooltip">Katalog Menu</span>
-                        @if(request()->routeIs('menu.*'))
+                        <?php if(request()->routeIs('menu.*')): ?>
                         <div class="absolute right-3 w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_8px_rgba(228,145,201,0.6)]"></div>
-                        @endif
+                        <?php endif; ?>
                     </a>
 
                 </div>
             </div>
 
-            @if(auth()->user()->isAdmin())
+            <?php if(auth()->user()->isAdmin()): ?>
             <!-- Group: Reports -->
             <div>
                 <p x-show="sidebarOpen" class="px-4 text-[10px] font-black uppercase tracking-[0.15em] text-white/30 mb-3 nav-item-animate" style="animation-delay: 0.75s;">Laporan</p>
                 <div class="space-y-1">
-                    <a href="{{ route('laporan.index') }}" 
-                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate {{ request()->routeIs('laporan.*') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white' }}"
+                    <a href="<?php echo e(route('laporan.index')); ?>" 
+                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate <?php echo e(request()->routeIs('laporan.*') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white'); ?>"
                        style="animation-delay: 0.8s;"
                        :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'">
-                        <span class="material-symbols-outlined !text-[22px] sidebar-transition {{ request()->routeIs('laporan.*') ? 'text-tertiary' : 'text-white/40 group-hover:text-white' }}">analytics</span>
+                        <span class="material-symbols-outlined !text-[22px] sidebar-transition <?php echo e(request()->routeIs('laporan.*') ? 'text-tertiary' : 'text-white/40 group-hover:text-white'); ?>">analytics</span>
                         <span x-show="sidebarOpen" class="ml-4 text-sm font-bold tracking-tight">Laporan Sales</span>
                         <span x-show="!sidebarOpen" class="sidebar-tooltip">Laporan Sales</span>
-                        @if(request()->routeIs('laporan.*'))
+                        <?php if(request()->routeIs('laporan.*')): ?>
                         <div class="absolute right-3 w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_8px_rgba(228,145,201,0.6)]"></div>
-                        @endif
+                        <?php endif; ?>
                     </a>
                 </div>
             </div>
-            @endif
+            <?php endif; ?>
 
-            @if(auth()->user()->isAdmin())
+            <?php if(auth()->user()->isAdmin()): ?>
             <div>
                 <p x-show="sidebarOpen" class="px-4 text-[10px] font-black uppercase tracking-[0.15em] text-white/30 mb-3 nav-item-animate" style="animation-delay: 0.8s;">Pengaturan</p>
                 <div class="space-y-1">
-                    <a href="{{ route('pengguna.index') }}" 
-                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate {{ request()->routeIs('pengguna.*') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white' }}"
+                    <a href="<?php echo e(route('pengguna.index')); ?>" 
+                       class="sidebar-item group flex items-center h-12 rounded-xl relative nav-item-animate <?php echo e(request()->routeIs('pengguna.*') ? 'text-white glass-active shadow-sm' : 'hover:bg-white/5 hover:text-white'); ?>"
                        style="animation-delay: 0.9s;"
                        :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'">
-                        <span class="material-symbols-outlined !text-[22px] sidebar-transition {{ request()->routeIs('pengguna.*') ? 'text-tertiary' : 'text-white/40 group-hover:text-white' }}">admin_panel_settings</span>
+                        <span class="material-symbols-outlined !text-[22px] sidebar-transition <?php echo e(request()->routeIs('pengguna.*') ? 'text-tertiary' : 'text-white/40 group-hover:text-white'); ?>">admin_panel_settings</span>
                         <span x-show="sidebarOpen" class="ml-4 text-sm font-bold tracking-tight">Akses Pengguna</span>
                         <span x-show="!sidebarOpen" class="sidebar-tooltip">Akses Pengguna</span>
-                        @if(request()->routeIs('pengguna.*'))
+                        <?php if(request()->routeIs('pengguna.*')): ?>
                         <div class="absolute right-3 w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_8px_rgba(228,145,201,0.6)]"></div>
-                        @endif
+                        <?php endif; ?>
                     </a>
                 </div>
             </div>
-            @endif
+            <?php endif; ?>
         </div>
 
         <!-- User Profile Bottom -->
@@ -268,17 +268,18 @@
                 <button @click="userOpen = !userOpen" @click.away="userOpen = false" class="w-full group p-2.5 rounded-xl hover:bg-white/5 transition-all duration-200 focus:outline-none">
                     <div class="flex items-center gap-3 overflow-hidden">
                         <div class="w-10 h-10 rounded-lg bg-tertiary/10 flex items-center justify-center text-tertiary text-sm font-black shrink-0 border border-tertiary/20">
-                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                            <?php echo e(strtoupper(substr(auth()->user()->name, 0, 1))); ?>
+
                         </div>
                         <div x-show="sidebarOpen" x-transition.opacity class="flex flex-col items-start min-w-0 truncate text-left">
-                            <span class="text-xs font-bold text-white tracking-tight truncate w-full">{{ auth()->user()->name }}</span>
-                            <span class="text-[9px] uppercase font-black text-tertiary tracking-widest mt-0.5">{{ auth()->user()->role }}</span>
+                            <span class="text-xs font-bold text-white tracking-tight truncate w-full"><?php echo e(auth()->user()->name); ?></span>
+                            <span class="text-[9px] uppercase font-black text-tertiary tracking-widest mt-0.5"><?php echo e(auth()->user()->role); ?></span>
                         </div>
                         <span x-show="sidebarOpen" class="material-symbols-outlined text-white/20 text-sm ml-auto group-hover:text-white transition-colors">expand_less</span>
                     </div>
                 </button>
                 
-                {{-- Dropdown Menu (Upwards) --}}
+                
                 <div x-show="userOpen" 
                      x-transition:enter="transition ease-out duration-200"
                      x-transition:enter-start="opacity-0 scale-95 translate-y-2"
@@ -289,18 +290,18 @@
                      x-cloak class="absolute bottom-full left-0 w-full mb-3 bg-[#1e204a] rounded-xl shadow-2xl py-2 z-50 border border-white/10 text-white/80">
                     
                     <div class="px-4 py-2 border-b border-white/5 mb-1">
-                        <p class="text-xs font-bold text-white truncate">{{ auth()->user()->name }}</p>
-                        <p class="text-[9px] text-tertiary uppercase font-black tracking-widest mt-1">{{ auth()->user()->role }}</p>
+                        <p class="text-xs font-bold text-white truncate"><?php echo e(auth()->user()->name); ?></p>
+                        <p class="text-[9px] text-tertiary uppercase font-black tracking-widest mt-1"><?php echo e(auth()->user()->role); ?></p>
                     </div>
 
-                    <a href="{{ route('profile.show') }}" class="flex items-center gap-3 px-4 py-2.5 text-xs font-bold hover:bg-white/5 hover:text-white transition-colors">
+                    <a href="<?php echo e(route('profile.show')); ?>" class="flex items-center gap-3 px-4 py-2.5 text-xs font-bold hover:bg-white/5 hover:text-white transition-colors">
                         <span class="material-symbols-outlined !text-[18px]">manage_accounts</span>
                         Profil & Keamanan
                     </a>
 
                     <div class="mt-1 pt-1 border-t border-white/5">
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
+                        <form method="POST" action="<?php echo e(route('logout')); ?>">
+                            <?php echo csrf_field(); ?>
                             <button type="submit" class="w-full text-left px-4 py-2.5 text-xs text-red-400 hover:bg-red-400/10 font-bold transition-colors flex items-center gap-3">
                                 <span class="material-symbols-outlined !text-[18px]">logout</span>
                                 Keluar Sistem
@@ -320,7 +321,7 @@
                 style="background: rgba(255,255,255,0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid rgba(21,23,61,0.08); box-shadow: 0 1px 20px rgba(21,23,61,0.06);"
                 :class="sidebarOpen ? 'lg:left-[280px]' : 'lg:left-20'">
             
-            {{-- Left Side Header --}}
+            
             <div class="flex items-center gap-3">
                 <button @click="mobileOpen = !mobileOpen" class="text-gray-400 hover:text-primary lg:hidden p-2 rounded-xl hover:bg-primary/5 transition-all">
                     <span class="material-symbols-outlined !text-[22px]">menu</span>
@@ -329,15 +330,15 @@
                     <span class="material-symbols-outlined !text-[22px]">menu</span>
                 </button>
                 <div class="hidden sm:flex items-center gap-2">
-                    <a href="{{ route('dashboard') }}" class="text-xs font-bold text-gray-400 hover:text-primary transition-colors">Dashboard</a>
+                    <a href="<?php echo e(route('dashboard')); ?>" class="text-xs font-bold text-gray-400 hover:text-primary transition-colors">Dashboard</a>
                     <span class="material-symbols-outlined !text-[14px] text-gray-300">chevron_right</span>
-                    <span class="text-xs font-black text-primary tracking-tight">@yield('page-title', 'Dashboard')</span>
+                    <span class="text-xs font-black text-primary tracking-tight"><?php echo $__env->yieldContent('page-title', 'Dashboard'); ?></span>
                 </div>
             </div>
 
-            {{-- Right Side Header --}}
+            
             <div class="flex items-center gap-2 sm:gap-3">
-                {{-- Live Clock --}}
+                
                 <div x-data="{ time: '' }" x-init="setInterval(() => { time = new Date().toLocaleTimeString('id-ID', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit' }) + ' WIB' }, 1000)"
                      class="flex items-center gap-1.5 sm:gap-2">
                     <span class="material-symbols-outlined !text-[16px] text-primary/40">schedule</span>
@@ -349,7 +350,7 @@
         </header>
 
         <!-- Flash Messages -->
-        @if(session('success'))
+        <?php if(session('success')): ?>
         <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 -translate-y-2"
@@ -363,15 +364,15 @@
             </div>
             <div class="flex-1">
                 <p class="font-black text-green-800">Berhasil!</p>
-                <p class="text-xs text-green-600 font-medium mt-0.5">{{ session('success') }}</p>
+                <p class="text-xs text-green-600 font-medium mt-0.5"><?php echo e(session('success')); ?></p>
             </div>
             <button @click="show = false" class="text-green-400 hover:text-green-600 transition-colors">
                 <span class="material-symbols-outlined !text-[18px]">close</span>
             </button>
         </div>
-        @endif
+        <?php endif; ?>
         
-        @if($errors->any())
+        <?php if($errors->any()): ?>
         <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 7000)"
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 -translate-y-2"
@@ -383,24 +384,24 @@
             <div class="flex-1 pr-4">
                 <p class="font-black text-red-800 mb-1">Ada Kesalahan</p>
                 <ul class="text-xs text-red-600 font-medium list-disc list-inside space-y-0.5">
-                    @foreach($errors->all() as $error) <li>{{ $error }}</li> @endforeach
+                    <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?> <li><?php echo e($error); ?></li> <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </ul>
             </div>
             <button @click="show = false" class="text-red-400 hover:text-red-600 transition-colors">
                 <span class="material-symbols-outlined !text-[18px]">close</span>
             </button>
         </div>
-        @endif
+        <?php endif; ?>
 
         <!-- Main Workspace -->
         <main class="flex-1 p-4 lg:p-6 w-full max-w-full overflow-x-hidden">
-            @yield('content')
+            <?php echo $__env->yieldContent('content'); ?>
         </main>
     </div>
 
-    @stack('scripts')
+    <?php echo $__env->yieldPushContent('scripts'); ?>
 
-    {{-- Global Confirmation Modal (Premium SaaS Style) --}}
+    
     <div x-data="{ 
             open: false, 
             title: '', 
@@ -426,13 +427,13 @@
          aria-labelledby="modal-title" role="dialog" aria-modal="true">
         
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            {{-- Backdrop --}}
+            
             <div x-show="open" x-transition.opacity @click="open = false" 
                  class="fixed inset-0 bg-primary/40 backdrop-blur-sm transition-opacity" aria-hidden="true"></div>
 
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
-            {{-- Modal Content --}}
+            
             <div x-show="open" 
                  x-transition:enter="ease-out duration-300"
                  x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
@@ -458,7 +459,7 @@
 
                 <div class="bg-gray-50/50 px-6 py-4 sm:px-8 sm:flex sm:flex-row-reverse gap-3 rounded-b-xl border-t border-gray-100">
                     <form :action="action" method="POST">
-                        @csrf
+                        <?php echo csrf_field(); ?>
                         <template x-if="method !== 'POST'">
                             <input type="hidden" name="_method" :value="method">
                         </template>
@@ -477,3 +478,4 @@
     </div>
 </body>
 </html>
+<?php /**PATH C:\laragon\www\kantin\resources\views/layouts/app.blade.php ENDPATH**/ ?>

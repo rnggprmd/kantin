@@ -1,23 +1,22 @@
-@extends('layouts.app')
-@section('title', 'Transaksi Baru — POS')
-@section('page-title', 'Kantin — Menu Pemesanan')
+<?php $__env->startSection('title', 'Transaksi Baru — POS'); ?>
+<?php $__env->startSection('page-title', 'Kantin — Menu Pemesanan'); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div x-data="pos()" class="h-[calc(100vh-6rem)] lg:h-[calc(100vh-7rem)] min-h-[500px]">
-    <form method="POST" action="{{ route('transaksi.store') }}" @submit="prepareSubmit" class="h-full">
-        @csrf
+    <form method="POST" action="<?php echo e(route('transaksi.store')); ?>" @submit="prepareSubmit" class="h-full">
+        <?php echo csrf_field(); ?>
         <input type="hidden" name="metode_bayar" x-model="metodeBayar">
         <input type="hidden" name="uang_bayar" :value="uangBayar || ''">
         <input type="hidden" name="catatan" x-model="catatan">
 
         <div class="flex flex-col md:flex-row gap-6 h-full">
 
-            {{-- LEFT: Menu Catalog --}}
+            
             <div class="flex-1 flex flex-col min-w-0 h-full bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
                 
-                {{-- Search & Categories --}}
+                
                 <div class="p-5 space-y-4 shrink-0 border-b border-gray-50 bg-gray-50/30">
-                    {{-- Search --}}
+                    
                     <div class="relative group">
                         <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 !text-[20px] text-gray-400 group-focus-within:text-primary transition-colors">search</span>
                         <input type="text" x-model="search" placeholder="Cari menu berdasarkan nama..."
@@ -25,66 +24,67 @@
                                       focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all">
                     </div>
 
-                    {{-- Category Tabs --}}
+                    
                     <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
                         <button type="button" @click="activeKategori = ''"
                                 class="px-5 py-2 rounded-xl text-xs font-black whitespace-nowrap transition-all border shrink-0 uppercase tracking-widest"
                                 :class="activeKategori === '' ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'bg-white text-gray-400 border-gray-100 hover:border-gray-200 hover:text-gray-600'">
                             Semua
                         </button>
-                        @foreach($menus->keys() as $kategori)
-                        <button type="button" @click="activeKategori = '{{ $kategori }}'"
+                        <?php $__currentLoopData = $menus->keys(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $kategori): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <button type="button" @click="activeKategori = '<?php echo e($kategori); ?>'"
                                 class="px-5 py-2 rounded-xl text-xs font-black whitespace-nowrap transition-all border shrink-0 uppercase tracking-widest"
-                                :class="activeKategori === '{{ $kategori }}' ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'bg-white text-gray-400 border-gray-100 hover:border-gray-200 hover:text-gray-600'">
-                            {{ $kategori ?? 'Lainnya' }}
+                                :class="activeKategori === '<?php echo e($kategori); ?>' ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'bg-white text-gray-400 border-gray-100 hover:border-gray-200 hover:text-gray-600'">
+                            <?php echo e($kategori ?? 'Lainnya'); ?>
+
                         </button>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
                 </div>
 
-                {{-- Menu Grid --}}
+                
                 <div class="flex-1 overflow-y-auto px-5 py-5 custom-scrollbar">
                     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                        @foreach($menus as $kategoriNama => $items)
-                        @foreach($items as $menu)
-                        <div x-show="(activeKategori === '' || activeKategori === '{{ $kategoriNama }}') &&
-                                     (search === '' || '{{ strtolower($menu->nama) }}'.includes(search.toLowerCase()))"
-                             @click="addToCart({{ json_encode(['id' => $menu->id, 'nama' => $menu->nama, 'harga' => $menu->harga]) }})"
+                        <?php $__currentLoopData = $menus; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $kategoriNama => $items): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php $__currentLoopData = $items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $menu): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <div x-show="(activeKategori === '' || activeKategori === '<?php echo e($kategoriNama); ?>') &&
+                                     (search === '' || '<?php echo e(strtolower($menu->nama)); ?>'.includes(search.toLowerCase()))"
+                             @click="addToCart(<?php echo e(json_encode(['id' => $menu->id, 'nama' => $menu->nama, 'harga' => $menu->harga])); ?>)"
                              class="group bg-white border border-gray-100 hover:border-secondary rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 select-none flex flex-col relative">
                             
  
 
                             <div class="aspect-[4/3] overflow-hidden bg-gray-50 flex-shrink-0 border-b border-gray-50">
-                                @if($menu->gambar)
-                                <img src="{{ asset('storage/' . $menu->gambar) }}" alt="{{ $menu->nama }}"
+                                <?php if($menu->gambar): ?>
+                                <img src="<?php echo e(asset('storage/' . $menu->gambar)); ?>" alt="<?php echo e($menu->nama); ?>"
                                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                                @else
-                                <img src="https://loremflickr.com/400/300/food?lock={{ $menu->id }}" alt="{{ $menu->nama }}"
+                                <?php else: ?>
+                                <img src="https://loremflickr.com/400/300/food?lock=<?php echo e($menu->id); ?>" alt="<?php echo e($menu->nama); ?>"
                                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                                @endif
+                                <?php endif; ?>
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                             </div>
                             <div class="p-4 flex flex-col flex-1 bg-white">
-                                <p class="text-[13px] font-black text-gray-900 line-clamp-2 leading-snug group-hover:text-secondary transition-colors" title="{{ $menu->nama }}">{{ $menu->nama }}</p>
+                                <p class="text-[13px] font-black text-gray-900 line-clamp-2 leading-snug group-hover:text-secondary transition-colors" title="<?php echo e($menu->nama); ?>"><?php echo e($menu->nama); ?></p>
                                 <div class="mt-auto pt-3 flex items-center justify-between">
-                                    <p class="text-sm text-primary font-black tracking-tighter">Rp {{ number_format($menu->harga, 0, ',', '.') }}</p>
+                                    <p class="text-sm text-primary font-black tracking-tighter">Rp <?php echo e(number_format($menu->harga, 0, ',', '.')); ?></p>
                                     <div class="w-7 h-7 rounded-lg bg-gray-50 flex items-center justify-center group-hover:bg-secondary group-hover:text-white transition-colors">
                                         <span class="material-symbols-outlined !text-[16px]">add</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        @endforeach
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
                 </div>
             </div>
 
-            {{-- RIGHT: Cart --}}
+            
             <div class="w-full md:w-72 xl:w-[320px] flex flex-col shrink-0 h-full">
                 <div class="bg-white rounded-3xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
 
-                    {{-- Cart Header --}}
+                    
                     <div class="shrink-0">
                         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-50 bg-gray-50/20">
                             <div class="flex items-center gap-3">
@@ -108,7 +108,7 @@
                         </div>
                     </div>
 
-                    {{-- Cart Items --}}
+                    
                     <div class="flex-1 overflow-y-auto px-6 py-4 custom-scrollbar">
                         <template x-if="cart.length === 0">
                             <div class="flex flex-col items-center justify-center h-full text-gray-300 py-10">
@@ -120,7 +120,7 @@
                         <div class="space-y-4">
                             <template x-for="(item, index) in cart" :key="item.id">
                                 <div class="flex flex-col gap-1.5 pb-3 border-b border-gray-50 last:border-0 last:pb-0">
-                                    {{-- Hidden Inputs --}}
+                                    
                                     <input type="hidden" :name="'items[' + index + '][menu_id]'" :value="item.id">
                                     <input type="hidden" :name="'items[' + index + '][qty]'" :value="item.qty">
                                     
@@ -144,16 +144,16 @@
                         </div>
                     </div>
 
-                    {{-- Summary & Payment --}}
+                    
                     <div class="shrink-0 bg-white px-4 py-3 space-y-2 border-t border-gray-100 rounded-b-3xl shadow-[0_-10px_25px_rgba(0,0,0,0.03)]">
 
-                        {{-- Total --}}
+                        
                         <div class="flex items-center justify-between">
                             <span class="text-gray-400 text-[8px] font-black uppercase tracking-widest">Total Bayar</span>
                             <span class="text-xl font-black text-primary tracking-tighter tabular-nums" x-text="'Rp' + total.toLocaleString('id-ID')"></span>
                         </div>
 
-                        {{-- Payment Method Toggle --}}
+                        
                         <div class="bg-gray-100 p-0.5 rounded-lg border border-gray-200 flex">
                             <button type="button" @click="metodeBayar = 'tunai'"
                                     class="flex-1 py-1.5 rounded-md text-[8px] font-black transition-all uppercase tracking-widest flex items-center justify-center gap-1.5"
@@ -167,7 +167,7 @@
                             </button>
                         </div>
 
-                        {{-- Uang Bayar (Tunai Only) --}}
+                        
                         <div x-show="metodeBayar === 'tunai'" x-transition x-cloak class="space-y-2">
                             <div class="relative group">
                                 <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-black text-[9px]">Rp</span>
@@ -181,14 +181,14 @@
                             </div>
                         </div>
 
-                        {{-- Non Tunai Note --}}
+                        
                         <div x-show="metodeBayar === 'non_tunai'" x-transition x-cloak
                              class="text-[8px] text-blue-700 bg-blue-50 border border-blue-200/30 rounded-lg px-2.5 py-1.5 font-black flex items-center gap-1.5 leading-tight uppercase tracking-wide">
                              <span class="material-symbols-outlined !text-[14px] shrink-0">info</span>
                              Transfer / QRIS / E-Wallet
                         </div>
 
-                        {{-- Catatan --}}
+                        
                         <div class="relative group">
                             <span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 !text-[14px] text-gray-400 group-focus-within:text-primary transition-colors">notes</span>
                             <input type="text" x-model="catatan" placeholder="Catatan..."
@@ -196,7 +196,7 @@
                                           focus:outline-none focus:border-primary transition-all">
                         </div>
 
-                        {{-- Submit Button --}}
+                        
                         <button type="submit" id="btn-bayar"
                                 :disabled="cart.length === 0 || (metodeBayar === 'tunai' && uangBayar < total)"
                                 class="w-full py-2.5 flex items-center justify-center font-black rounded-lg text-[9px] transition-all border shrink-0 uppercase tracking-[0.2em] shadow-lg shadow-primary/5"
@@ -213,9 +213,9 @@
         </div>
     </form>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script>
 function pos() {
     return {
@@ -271,4 +271,6 @@ function pos() {
     }
 }
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\kantin\resources\views/transaksi/create.blade.php ENDPATH**/ ?>

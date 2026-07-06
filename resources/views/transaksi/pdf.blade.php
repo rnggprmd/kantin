@@ -201,8 +201,8 @@
 
     <div class="info-grid">
         <div class="info-col">
-            <div class="info-label">Diterbitkan Untuk</div>
-            <div class="info-value">{{ $transaksi->pelanggan_nama ?: 'Pelanggan Umum' }}</div>
+            <div class="info-label">Tanggal Transaksi</div>
+            <div class="info-value">{{ $transaksi->created_at->format('d/m/Y H:i') }}</div>
         </div>
         <div class="info-col">
             <div class="info-label">Tanggal Transaksi</div>

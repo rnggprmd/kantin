@@ -84,7 +84,7 @@
     </div>
 
     {{-- Analytical Insights Grid --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         
         {{-- Metode Pembayaran --}}
         <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
@@ -155,27 +155,6 @@
             <div class="flex justify-between mt-2 px-1 text-[8px] font-black text-gray-300 uppercase tracking-widest">
                 <span>08:00</span>
                 <span>18:00</span>
-            </div>
-        </div>
-
-        {{-- Pelanggan Setia --}}
-        <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-                <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Leaderboard</h4>
-                <span class="material-symbols-outlined text-gray-300 !text-[18px]">workspace_premium</span>
-            </div>
-            <div class="space-y-2">
-                @forelse($pelangganTeraktif->take(3) as $p)
-                <div class="flex items-center gap-2">
-                    <div class="w-5 h-5 rounded bg-amber-50 text-amber-600 flex items-center justify-center text-[9px] font-black border border-amber-100">
-                        {{ substr($p->pelanggan_nama, 0, 1) }}
-                    </div>
-                    <span class="text-[10px] font-bold text-gray-700 truncate flex-1">{{ $p->pelanggan_nama }}</span>
-                    <span class="text-[10px] font-black text-primary">{{ $p->jumlah }}x</span>
-                </div>
-                @empty
-                <p class="text-[10px] text-gray-400 text-center py-2 italic">Data belum tersedia</p>
-                @endforelse
             </div>
         </div>
     </div>

@@ -72,9 +72,6 @@
                         </td>
                         <td class="px-5 py-3.5">
                             <code class="text-[12px] font-black text-primary bg-primary/5 px-2 py-0.5 rounded-lg">{{ $t->kode_transaksi }}</code>
-                            @if($t->pelanggan_nama)
-                            <p class="text-[11px] text-gray-400 mt-1 font-medium">A/N: {{ $t->pelanggan_nama }}</p>
-                            @endif
                         </td>
                         <td class="px-5 py-3.5">
                             <p class="text-sm font-bold text-gray-800">{{ $t->created_at->format('d M Y') }}</p>

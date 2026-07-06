@@ -13,62 +13,29 @@ class MidtransController extends Controller
     {
         Config::$serverKey = config('services.midtrans.server_key');
         Config::$isProduction = (bool) config('services.midtrans.is_production');
-        Config::$isSanitized = (bool) config('services.midtrans.is_sanitized');
-        Config::$is3ds = (bool) config('services.midtrans.is_3ds');
 
-        try {
-            $notification = new Notification();
+        $notification = new Notification();
 
-            $transactionStatus = $notification->transaction_status;
-            $orderId = $notification->order_id;
-            $statusCode = $notification->status_code;
-            $grossAmount = $notification->gross_amount;
-            $serverKey = config('services.midtrans.server_key');
+        $orderIdParts = explode('-', $notification->order_id);
+        $kodeTransaksi = $orderIdParts[0];
 
-            // Verify signature key to prevent spoofing
-            // SHA512(order_id + status_code + gross_amount + ServerKey)
-            $signature = hash('sha512', $orderId . $statusCode . $grossAmount . $serverKey);
+        $transaksi = Transaksi::where('kode_transaksi', $kodeTransaksi)->firstOrFail();
 
-            if ($signature !== $notification->signature_key) {
-                return response()->json(['status' => 'error', 'message' => 'Invalid signature'], 403);
-            }
+        $transactionStatus = $notification->transaction_status;
+        $fraudStatus = $notification->fraud_status ?? null;
 
-            // Extract real transaction code
-            $transactionCode = explode('-', $orderId)[0];
-            $transaksi = Transaksi::where('kode_transaksi', $transactionCode)->first();
-
-            if (!$transaksi) {
-                return response()->json(['status' => 'error', 'message' => 'Transaksi tidak ditemukan'], 404);
-            }
-
-            if ($transactionStatus == 'capture') {
-                if ($notification->fraud_status == 'challenge') {
-                    $transaksi->update(['status' => 'pending']);
-                } else {
-                    $transaksi->update(['status' => 'selesai']);
-                }
-            } else if ($transactionStatus == 'settlement') {
+        if ($transactionStatus == 'capture') {
+            if ($fraudStatus == 'accept') {
                 $transaksi->update(['status' => 'selesai']);
-            } else if ($transactionStatus == 'pending') {
-                $transaksi->update(['status' => 'pending']);
-            } else if ($transactionStatus == 'deny' || $transactionStatus == 'expire' || $transactionStatus == 'cancel') {
-                // Return stock to inventory if it wasn't already canceled
-                if ($transaksi->status !== 'batal') {
-                    $transaksi->restoreStock();
-                    $transaksi->update(['status' => 'batal']);
-                }
             }
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Notification processed'
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
+        } elseif ($transactionStatus == 'settlement') {
+            $transaksi->update(['status' => 'selesai']);
+        } elseif (in_array($transactionStatus, ['cancel', 'deny', 'expire'])) {
+            $transaksi->update(['status' => 'batal']);
+        } elseif ($transactionStatus == 'pending') {
+            // Keep as pending
         }
+
+        return response()->json(['status' => 'success']);
     }
 }

@@ -9,10 +9,6 @@ class Transaksi extends Model
     protected $fillable = [
         'kode_transaksi',
         'user_id',
-        'meja_id',
-        'nomor_antrean',
-        'status_pesanan',
-        'pelanggan_nama',
         'total_harga',
         'metode_bayar',
         'uang_bayar',
@@ -20,26 +16,17 @@ class Transaksi extends Model
         'status',
         'catatan',
         'snap_token',
-        'payment_ref',
-        'payment_status',
-        'paid_at',
     ];
 
     protected $casts = [
         'total_harga' => 'decimal:2',
         'uang_bayar' => 'decimal:2',
         'kembalian' => 'decimal:2',
-        'paid_at' => 'datetime',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function meja()
-    {
-        return $this->belongsTo(Meja::class);
     }
 
     public function details()
@@ -64,6 +51,4 @@ class Transaksi extends Model
             default => 'bg-gray-100 text-gray-700',
         };
     }
-
-
 }

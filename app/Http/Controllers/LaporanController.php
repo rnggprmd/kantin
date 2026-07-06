@@ -90,18 +90,6 @@ class LaporanController extends Controller
             ->orderBy('jam')
             ->get();
 
-        // Pelanggan Teraktif
-        $pelangganTeraktif = DB::table('transaksis')
-            ->where('status', 'selesai')
-            ->whereDate('created_at', '>=', $tanggalDari)
-            ->whereDate('created_at', '<=', $tanggalSampai)
-            ->whereNotNull('pelanggan_nama')
-            ->select('pelanggan_nama', DB::raw('COUNT(*) as jumlah'), DB::raw('SUM(total_harga) as total'))
-            ->groupBy('pelanggan_nama')
-            ->orderByDesc('total')
-            ->limit(5)
-            ->get();
-
         return view('laporan.index', compact(
             'transaksis',
             'ringkasan',
@@ -113,8 +101,7 @@ class LaporanController extends Controller
             'tanggalSampai',
             'distribusiBayar',
             'pendapatanKategori',
-            'distribusiJam',
-            'pelangganTeraktif'
+            'distribusiJam'
         ));
     }
 
