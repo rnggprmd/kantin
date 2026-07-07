@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Login') — Kantin SMK PURNAMA 1 JAKARTA</title>
+    <title><?php echo $__env->yieldContent('title', 'Login'); ?> — Kantin SMK PURNAMA 1 JAKARTA</title>
 
     <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
     <script>
@@ -112,6 +112,7 @@
     </style>
 </head>
 <body class="min-h-screen overflow-hidden font-sans" style="background:#f8f9fa;color:#191c1d;">
-    @yield('content')
+    <?php echo $__env->yieldContent('content'); ?>
 </body>
 </html>
+<?php /**PATH C:\laragon\www\kantin\resources\views/layouts/auth.blade.php ENDPATH**/ ?>

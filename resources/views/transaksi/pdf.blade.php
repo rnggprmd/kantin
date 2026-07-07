@@ -282,7 +282,7 @@
     </div>
 
     <div class="disclaimer">
-        Dokumen ini adalah bukti transaksi sah yang diterbitkan secara elektronik oleh Sistem Manajemen Kantin Maria.<br>
+        Dokumen ini adalah bukti transaksi sah yang diterbitkan secara elektronik oleh Sistem Manajemen Kantin SMK PURNAMA 1 JAKARTA.<br>
         Terima kasih atas kunjungan Anda.
     </div>
 </body>

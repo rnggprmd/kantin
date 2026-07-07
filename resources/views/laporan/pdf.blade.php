@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Laporan Penjualan — Kantin Maria</title>
+    <title>Laporan Penjualan — KANTIN SMK PURNAMA 1 JAKARTA</title>
     <style>
         body { font-family: 'Helvetica', Arial, sans-serif; font-size: 11px; color: #1e293b; margin: 0; padding: 20px; line-height: 1.5; }
         .header { text-align: center; border-bottom: 3px solid #15173D; padding-bottom: 20px; margin-bottom: 30px; position: relative; }
@@ -28,7 +28,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>KANTIN MARIA</h1>
+        <h1>KANTIN SMK PURNAMA 1 JAKARTA</h1>
         <p>Laporan Penjualan — {{ \Carbon\Carbon::parse($tanggalDari)->format('d/m/Y') }} s/d {{ \Carbon\Carbon::parse($tanggalSampai)->format('d/m/Y') }}</p>
         <p>Dicetak: {{ now()->format('d/m/Y H:i') }} WIB</p>
     </div>
@@ -114,7 +114,7 @@
     </table>
 
     <div class="footer">
-        Dokumen ini dicetak secara otomatis oleh Sistem Manajemen Kantin Maria
+        Dokumen ini dicetak secara otomatis oleh Sistem Manajemen Kantin SMK PURNAMA 1 JAKARTA
     </div>
 </body>
 </html>

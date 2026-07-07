@@ -1,10 +1,9 @@
-@extends('layouts.auth')
-@section('title', 'Masuk')
+<?php $__env->startSection('title', 'Masuk'); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <main class="flex w-full h-screen">
 
-    {{-- ===== LEFT PANEL: Hero Image ===== --}}
+    
     <section class="hidden lg:flex flex-1 relative items-center justify-center overflow-hidden">
         <div class="absolute inset-0 z-0 overflow-hidden">
             <img class="w-full h-full object-cover animate-slow-zoom"
@@ -38,25 +37,25 @@
         </div>
     </section>
 
-    {{-- ===== RIGHT PANEL: Login Form ===== --}}
+    
     <section class="flex-1 flex flex-col relative overflow-hidden" style="background:#f8f9fa;">
 
-        {{-- Floating decorative icons --}}
+        
         <span class="material-symbols-outlined floating-icon float-1">restaurant</span>
         <span class="material-symbols-outlined floating-icon float-2">eco</span>
         <span class="material-symbols-outlined floating-icon float-3">local_cafe</span>
 
-        {{-- Scrollable area --}}
+        
         <div class="flex-1 flex items-center justify-center overflow-y-auto px-6 sm:px-16 py-10 relative z-10">
             <div class="w-full max-w-[420px] animate-breath">
 
-                {{-- Mobile logo --}}
+                
                 <div class="flex lg:hidden items-center gap-3 mb-8">
                     <span class="material-symbols-outlined" style="color:#15173d;font-size:34px;">restaurant</span>
                     <span class="font-headline font-extrabold text-2xl" style="color:#15173d;">SMK PURNAMA 1 JAKARTA</span>
                 </div>
 
-                {{-- Heading --}}
+                
                 <div class="mb-8">
                     <h3 class="font-headline font-bold text-[32px] leading-tight mb-2 animate-slide-in" style="color:#191c1d;">
                         Selamat Datang
@@ -66,23 +65,24 @@
                     </p>
                 </div>
 
-                {{-- Error alert --}}
-                @if(session('error') || $errors->any())
+                
+                <?php if(session('error') || $errors->any()): ?>
                 <div class="flex items-center gap-3 p-4 rounded-2xl mb-6 text-sm font-medium"
                      style="background:#ffdad6;color:#93000a;border:1px solid rgba(186,26,26,0.25);">
                     <span class="material-symbols-outlined shrink-0" style="font-size:20px;">error</span>
-                    {{ session('error') ?? $errors->first() }}
+                    <?php echo e(session('error') ?? $errors->first()); ?>
+
                 </div>
-                @endif
+                <?php endif; ?>
 
-                {{-- Form --}}
-                <form method="POST" action="{{ route('login.post') }}">
-                    @csrf
+                
+                <form method="POST" action="<?php echo e(route('login.post')); ?>">
+                    <?php echo csrf_field(); ?>
 
-                    {{-- Space between fields --}}
+                    
                     <div class="flex flex-col gap-5">
 
-                        {{-- Username --}}
+                        
                         <div>
                             <label class="block text-[11px] font-bold uppercase tracking-widest mb-2"
                                    style="color:#46464e;" for="username">Username</label>
@@ -90,7 +90,7 @@
                                 <input
                                     id="username" name="username" type="text"
                                     placeholder="Masukkan username Anda"
-                                    value="{{ old('username') }}"
+                                    value="<?php echo e(old('username')); ?>"
                                     required autofocus
                                     class="w-full rounded-2xl text-sm transition-all outline-none"
                                     style="padding:13px 48px 13px 18px;background:#fff;border:1.5px solid #c7c5cf;color:#191c1d;"
@@ -100,7 +100,7 @@
                             </div>
                         </div>
 
-                        {{-- Password --}}
+                        
                         <div>
                             <div class="flex justify-between items-center mb-2">
                                 <label class="text-[11px] font-bold uppercase tracking-widest"
@@ -119,12 +119,12 @@
                             </div>
                         </div>
 
-                        {{-- Divider --}}
+                        
                         <div class="pt-2">
                             <div class="border-t w-full" style="border-color:rgba(199,197,207,0.5);"></div>
                         </div>
 
-                        {{-- Submit --}}
+                        
                         <button type="submit"
                                 class="btn-liquid w-full py-3.5 rounded-2xl font-headline font-bold text-base flex items-center justify-center gap-2 shadow-md transition-transform active:scale-[0.98]"
                                 style="background:#9d2a9d;color:#fff;">
@@ -138,13 +138,15 @@
             </div>
         </div>
 
-        {{-- Footer --}}
+        
         <footer class="shrink-0 text-center py-4 px-6" style="border-top:1px solid rgba(199,197,207,0.4);">
             <p class="text-[11px]" style="color:#77767f;">
-                © {{ date('Y') }} Sistem Kantin SMK PURNAMA 1 JAKARTA &bull; Kebijakan Privasi &bull; Ketentuan Layanan
+                © <?php echo e(date('Y')); ?> Sistem Kantin SMK PURNAMA 1 JAKARTA &bull; Kebijakan Privasi &bull; Ketentuan Layanan
             </p>
         </footer>
 
     </section>
 </main>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.auth', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\kantin\resources\views/auth/login.blade.php ENDPATH**/ ?>
